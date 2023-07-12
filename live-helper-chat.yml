@@ -48,7 +48,7 @@
             - php8.0-zip
             - php8.0-json
             - php8.0-cli
-            - php8.0-phpiredis
+            - php8.0-redis
             - php8.0-imap
             - php8.0-pecl-redis4
             - php8.0-pecl-igbinary
