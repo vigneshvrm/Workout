@@ -84,22 +84,23 @@
 #             'Reload privilege tables now? [Y/n]': 'Y'
 #           echo: yes
 
-# 8 - Create a database
-      - name: Create a database
-        mysql_db:
-          name: lhcdb
-          state: present
-          login_user: root
-          login_password: ''
+# # 8 - Create a database
+#       - name: Create a database
+#         mysql_db:
+#           name: lhcdb
+#           state: present
+#           login_user: root
+#           login_password: ''
 
 # 9 - Create a database user
-      - name: Create database user for livechat
-        mysql_user:
-          name: lhcdb
-          password: "{{ userpassword.stdout }}"
-          priv: 'lhcdb.*:ALL'
-          state: present
-        become: true
+      - name: Create database  and user for livechat
+        command: 'mysql -ne "{{ item }}"'
+        with_items:
+            - CREATE USER 'lhcues'@'%' IDENTIFIED BY '{{userpassword.stdout}}';
+            - CREATE DATABASE lhcdb;
+            - GRANT ALL PRIVILEGES ON lhcdb.* TO 'lhcues'@'%';
+            - FLUSH PRIVILEGES;
+        changed_when: False
 
 # 10 - Download the Live Helper Chat application
       - name: Download the Live Helper Chat application
