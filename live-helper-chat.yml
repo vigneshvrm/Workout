@@ -31,10 +31,9 @@
       - name: Install the required packages
         apt:
           name:
-            - apache2 
+            - nginx 
             - mariadb-server 
             - php 
-            - libapache2-mod-php 
             - php-common 
             - php-gmp 
             - php-curl 
