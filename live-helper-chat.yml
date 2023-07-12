@@ -126,8 +126,9 @@
 # 13 - Create a virtual host
       - name: Create a virtual host
         template:
-          src: templates/livehelperchat.conf.j2
+          src: /usr/local/src/livehelperchat.conf.j2
           dest: /etc/nginx/sites-available/livehelperchat.conf
+          remote_src: yes
 
 # 14 - Enable the virtual host
       - name: Enable the virtual host
