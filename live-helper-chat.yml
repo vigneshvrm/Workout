@@ -90,7 +90,7 @@
           name: lhcdb
           state: present
           login_user: root
-          login_password: '{{ rootpassword.stdout }}'
+          login_password: ''
 
 # 9 - Create a database user
       - name: Create database user for livechat
