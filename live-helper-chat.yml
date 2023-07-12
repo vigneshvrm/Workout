@@ -52,7 +52,6 @@
               - php8.0-opcache
               - php8.0-common
               - php8.0-pdo
-              - php8.0-pecl-zip
               - php8.0-mysqlnd
               - php8.0-bcmath
               - mysql-server
