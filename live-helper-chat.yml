@@ -58,7 +58,7 @@
             - php8.0-bcmath
             - mysql-server
             - mysql-client
-        state: present
+          state: present
 
 
 # # 4 - Generating mysql root password
