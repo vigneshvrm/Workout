@@ -4,8 +4,8 @@
 - name: Wordpress Setup
   hosts: localhost
   tasks:
-      - name: Restarting sshd
-        shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
+      # - name: Restarting sshd
+      #   shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
 
 # 3 - Add the packages
       - name: Add software properties common
