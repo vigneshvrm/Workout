@@ -1,15 +1,27 @@
-<VirtualHost *:80>
-ServerAdmin admin@example.com
-DocumentRoot /var/www/html/livehelperchat/lhc_web
-ServerName livehelper.example.com
+server {
+    listen 80;
+    server_name your_domain.com;
 
-<Directory /var/www/html/livehelperchat/lhc_web/>
-Options +FollowSymlinks
-AllowOverride All
-Require all granted
-</Directory>
+    root /var/www/html/livehelperchat-master;
+    index index.php;
 
-ErrorLog ${APACHE_LOG_DIR}/error.log
-CustomLog ${APACHE_LOG_DIR}/access.log combined
+    location / {
+        try_files $uri $uri/ /index.php$is_args$args;
+    }
 
-</VirtualHost>
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php8.0-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+    }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+        expires max;
+        log_not_found off;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
