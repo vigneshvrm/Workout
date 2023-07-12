@@ -1,0 +1,152 @@
+# Install and configure the Live Helper Chat application on Ubuntu 20.04 LTS
+
+# 1 - Block all incoming SSH traffic 
+- name: Wordpress Setup
+  hosts: localhost
+  tasks:
+      - name: Restarting sshd
+        shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
+
+# 3 - Add the packages
+      - name: Add software properties common
+        apt:
+          name: software-properties-common
+          state: present
+
+# 4 - Add the repository
+      - name: Add the repository
+        apt_repository:
+          repo: ppa:ondrej/php
+          state: present
+
+# 2 - Update the system
+      - name: Update the system
+        apt:
+          update_cache: yes
+          upgrade: yes
+          autoremove: yes
+          autoclean: yes
+
+# 3 - Install the required packages
+      - name: Install the required packages
+        apt:
+          name:
+            - wget
+            - unzip
+            - curl
+            - git
+            - nginx
+            - php-fpm
+            - php8.0-mysql
+            - php8.0-curl
+            - php8.0-gd
+            - php8.0-mbstring
+            - php8.0-xml
+            - php8.0-xmlrpc
+            - php8.0-soap
+            - php8.0-intl
+            - php8.0-zip
+            - php8.0-json
+            - php8.0-cli
+            - php8.0-phpiredis
+            - php8.0-imap
+            - php8.0-pecl-redis4
+            - php8.0-pecl-igbinary
+            - php8.0-geos
+            - php8.0-opcache
+            - php8.0-common
+            - php8.0-pdo
+            - php8.0-pecl-zip
+            - php8.0-mysqlnd
+            - php8.0-bcmath
+            - mysql-server
+            - mysql-client
+          state: present
+
+
+# 4 - Generating mysql root password
+      - name: Generating root password
+        shell: openssl rand -hex 24
+        register: rootpassword 
+
+# 5 - Generating mysql user root password
+      - name: Generating user password
+        shell: openssl rand -hex 24
+        register: userpassword  
+
+# 7 - Secure mysql installation
+      - name: Secure mysql installation
+        expect:
+          command: mysql_secure_installation
+          responses:
+            'Enter current password for root (enter for none):': ''
+            'Set root password? [Y/n]': 'Y'
+            'New password:': '{{ rootpassword.stdout }}'
+            'Re-enter new password:': '{{ rootpassword.stdout }}'
+            'Remove anonymous users? [Y/n]': 'Y'
+            'Disallow root login remotely? [Y/n]': 'Y'
+            'Remove test database and access to it? [Y/n]': 'Y'
+            'Reload privilege tables now? [Y/n]': 'Y'
+          echo: yes
+
+# 8 - Create a database
+      - name: Create a database
+        mysql_db:
+          name: lhcdb
+          state: present
+          login_user: root
+          login_password: '{{ rootpassword.stdout }}'
+
+# 9 - Create a database user
+      - name: Create database user for livechat
+        mysql_user:
+          name: lhcdb
+          password: "{{ userpassword.stdout }}"
+          priv: 'lhcdb.*:ALL'
+          state: present
+        become: true
+
+# 10 - Download the Live Helper Chat application
+      - name: Download the Live Helper Chat application
+        get_url:
+          url: https://github.com/remdex/livehelperchat/archive/master.zip
+          dest: /tmp/livehelperchat.zip
+
+# 11 - Unzip the Live Helper Chat application
+      - name: Unzip the Live Helper Chat application
+        unarchive:
+          src: /tmp/livehelperchat.zip
+          dest: /var/www/html
+          remote_src: yes
+
+# 12 - Set the correct permissions
+      - name: Set the correct permissions
+        file:
+          path: /var/www/html/livehelperchat-master
+          state: directory
+          mode: '0755'
+          recurse: yes
+
+# 13 - Create a virtual host
+      - name: Create a virtual host
+        template:
+          src: templates/livehelperchat.conf.j2
+          dest: /etc/nginx/sites-available/livehelperchat.conf
+
+# 14 - Enable the virtual host
+      - name: Enable the virtual host
+        file:
+          src: /etc/nginx/sites-available/livehelperchat.conf
+          dest: /etc/nginx/sites-enabled/livehelperchat.conf
+          state: link
+
+# 15 - Restart service 
+      - name: Restart nginx
+        service:
+          name: 
+            - nginx
+            - php8.0-fpm
+            - mysql
+          state: restarted
+
+
