@@ -59,30 +59,30 @@
           state: present
 
 
-# 4 - Generating mysql root password
-      - name: Generating root password
-        shell: openssl rand -hex 24
-        register: rootpassword 
+# # 4 - Generating mysql root password
+#       - name: Generating root password
+#         shell: openssl rand -hex 24
+#         register: rootpassword 
 
 # 5 - Generating mysql user root password
       - name: Generating user password
         shell: openssl rand -hex 24
         register: userpassword  
 
-# 7 - Secure mysql installation
-      - name: Secure mysql installation
-        expect:
-          command: mysql_secure_installation
-          responses:
-            'Enter current password for root (enter for none):': ''
-            'Set root password? [Y/n]': 'Y'
-            'New password:': '{{ rootpassword.stdout }}'
-            'Re-enter new password:': '{{ rootpassword.stdout }}'
-            'Remove anonymous users? [Y/n]': 'Y'
-            'Disallow root login remotely? [Y/n]': 'Y'
-            'Remove test database and access to it? [Y/n]': 'Y'
-            'Reload privilege tables now? [Y/n]': 'Y'
-          echo: yes
+# # 7 - Secure mysql installation
+#       - name: Secure mysql installation
+#         expect:
+#           command: mysql_secure_installation
+#           responses:
+#             'Enter current password for root (enter for none):': ''
+#             'Set root password? [Y/n]': 'Y'
+#             'New password:': '{{ rootpassword.stdout }}'
+#             'Re-enter new password:': '{{ rootpassword.stdout }}'
+#             'Remove anonymous users? [Y/n]': 'Y'
+#             'Disallow root login remotely? [Y/n]': 'Y'
+#             'Remove test database and access to it? [Y/n]': 'Y'
+#             'Reload privilege tables now? [Y/n]': 'Y'
+#           echo: yes
 
 # 8 - Create a database
       - name: Create a database
