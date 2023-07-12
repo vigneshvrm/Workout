@@ -31,68 +31,39 @@
       - name: Install the required packages
         apt:
           name:
-            - wget
-            - unzip
-            - curl
-            - git
-            - nginx
-            - php8.0-fpm
-            - php8.0-mysql
-            - php8.0-curl
-            - php8.0-gd
-            - php8.0-mbstring
-            - php8.0-xml
-            - php8.0-xmlrpc
-            - php8.0-soap
-            - php8.0-intl
-            - php8.0-zip
-            - php8.0-json
-            - php8.0-cli
-            - php8.0-redis
-            - php8.0-imap
-            - php8.0-opcache
-            - php8.0-common
-            - php8.0-pdo
-            - php8.0-pecl-zip
-            - php8.0-mysqlnd
-            - php8.0-bcmath
-            - mysql-server
-            - mysql-client
+              - wget
+              - unzip
+              - curl
+              - git
+              - nginx
+              - php8.0-fpm
+              - php8.0-mysql
+              - php8.0-curl
+              - php8.0-gd
+              - php8.0-mbstring
+              - php8.0-xml
+              - php8.0-xmlrpc
+              - php8.0-soap
+              - php8.0-intl
+              - php8.0-zip
+              - php8.0-json
+              - php8.0-cli
+              - php8.0-redis
+              - php8.0-imap
+              - php8.0-opcache
+              - php8.0-common
+              - php8.0-pdo
+              - php8.0-pecl-zip
+              - php8.0-mysqlnd
+              - php8.0-bcmath
+              - mysql-server
+              - mysql-client
           state: present
-
-
-# # 4 - Generating mysql root password
-#       - name: Generating root password
-#         shell: openssl rand -hex 24
-#         register: rootpassword 
 
 # 5 - Generating mysql user root password
       - name: Generating user password
         shell: openssl rand -hex 24
         register: userpassword  
-
-# # 7 - Secure mysql installation
-#       - name: Secure mysql installation
-#         expect:
-#           command: mysql_secure_installation
-#           responses:
-#             'Enter current password for root (enter for none):': ''
-#             'Set root password? [Y/n]': 'Y'
-#             'New password:': '{{ rootpassword.stdout }}'
-#             'Re-enter new password:': '{{ rootpassword.stdout }}'
-#             'Remove anonymous users? [Y/n]': 'Y'
-#             'Disallow root login remotely? [Y/n]': 'Y'
-#             'Remove test database and access to it? [Y/n]': 'Y'
-#             'Reload privilege tables now? [Y/n]': 'Y'
-#           echo: yes
-
-# # 8 - Create a database
-#       - name: Create a database
-#         mysql_db:
-#           name: lhcdb
-#           state: present
-#           login_user: root
-#           login_password: ''
 
 # 9 - Create a database user
       - name: Create database  and user for livechat
