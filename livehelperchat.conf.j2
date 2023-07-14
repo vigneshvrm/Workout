@@ -1,27 +1,107 @@
 server {
-    listen 80;
-    server_name chat.assistanz.com;
+   listen          *:80;
+   server_name     demo.livehelperchat.com;
+   root           /var/www/html/livehelperchat/lhc_web;
+   access_log     /var/log/nginx/access_demo_livehelperchat.log main;
 
-    root /var/www/html/livehelperchat-master;
-    index index.php;
+   location ~* (^(?!(?:(?!(php)).)*/(albums|bin|var|lib|cache|doc|settings|pos|modules)/).*?(index\.php|upgrade\.php)$) {
+      include        /etc/nginx/fastcgi_params;
+      fastcgi_pass   127.0.0.1:9000;
+      fastcgi_index  index.php;
+      fastcgi_param  PATH_INFO          $query_string;
+      fastcgi_param  SCRIPT_FILENAME /var/www/html/livehelperchat/lhc_web/$fastcgi_script_name;
+   }
 
-    location / {
-        try_files $uri $uri/ /index.php$is_args$args;
-    }
+   # Do not allow to hotlink full size images except our self and major search engines
+   location ~* \.(gif|jpe?g?|png|bmp|swf|css|js|svg|otf|eot|ttf|woff|woff2|swf|mp3|map|ogg|wasm|wav|pdf|ico|txt)$ {
 
-    location ~ \.php$ {
-        include fastcgi_params;
-        fastcgi_pass unix:/run/php/php8.0-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param SCRIPT_NAME $fastcgi_script_name;
-    }
+     if ($request_method = 'OPTIONS') {
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+        #
+        # Custom headers and headers various browsers *should* be OK with but aren't
+        #
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+        #
+        # Tell client that this pre-flight info is valid for 20 days
+        #
+        add_header 'Access-Control-Max-Age' 1728000;
+        add_header 'Content-Type' 'text/plain; charset=utf-8';
+        add_header 'Content-Length' 0;
+        return 204;
+     }
 
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
-        expires max;
-        log_not_found off;
-    }
+     # We don't want to allow bot to load our stuff. No point...
+     # If you are using Cloudflare or any other CDN Cache make sure you have rule so it won't cache empty.
+     # In general I suggest do not use this in case you have CDN because of complexity it brings.
+     if ($http_user_agent ~* "(google|baidu|bing|msn|duckduckbot|teoma|slurp|yandex|Chrome-Lighthouse)" ) {
+         add_header 'Access-Control-Allow-Origin' '*';
+         add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+         add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+         add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+         return 200;
+     }
 
-    location ~ /\.ht {
-        deny all;
-    }
+     if ($request_method = 'GET') {
+         add_header 'Access-Control-Allow-Origin' '*';
+         add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+         add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+         add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+      }
+
+       aio on;
+       directio 512;
+
+       expires max;
+       root            /var/www/html/livehelperchat/lhc_web;
+   }
+
+   # This is required if you are running nodeJs extension
+   location /socketcluster/ {
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header Host $http_host;
+          proxy_set_header X-NginX-Proxy true;
+
+          proxy_pass http://127.0.0.1:8000;
+          proxy_redirect off;
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "upgrade";
+   }
+
+   location / {
+         if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin' '*';
+            #
+            # Om nom nom cookies
+            #
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+            #
+            # Custom headers and headers various browsers *should* be OK with but aren't
+            #
+            add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization';
+            #
+            # Tell client that this pre-flight info is valid for 20 days
+            #
+            add_header 'Access-Control-Max-Age' 1728000;
+            add_header 'Content-Type' 'text/plain charset=UTF-8';
+            add_header 'Content-Length' 0;
+            return 204;
+         }
+
+          # We don't want to allow bot to load our stuff. No point...
+          # If you are using Cloudflare or any other CDN Cache make sure you have rule so it won't cache empty.
+          # In general I suggest do not use this in case you have CDN because of complexity it brings.
+         if ($http_user_agent ~* "(google|baidu|bing|msn|duckduckbot|teoma|slurp|yandex|Chrome-Lighthouse)" ) {
+             add_header 'Access-Control-Allow-Origin' '*';
+             add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+             add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+             add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+             return 200;
+         }
+
+         rewrite "^(.*)$" "/index.php?$1" last;
+   }
 }
