@@ -1,121 +1,338 @@
-# Install and configure the Live Helper Chat application on Ubuntu 20.04 LTS
-
-# 1 - Block all incoming SSH traffic 
+# Install and configure the Live Helper Chat application on Centos 7.9
+ 
 - name: Wordpress Setup
   hosts: localhost
   tasks:
-      # - name: Restarting sshd
-      #   shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
 
-# 3 - Add the packages
-      - name: Add software properties common
-        apt:
-          name: software-properties-common
-          state: present
+# 1 - Update the system
+  - name: Update the system
+    yum:
+      name: '*'
+      state: latest
+      update_cache: yes
 
-# 4 - Add the repository
-      - name: Add the repository
-        apt_repository:
-          repo: ppa:ondrej/php
-          state: present
+# 2 - Install EPEL and Remi repositories
+  - name: Install EPEL repository
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+     - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+     - https://rpms.remirepo.net/enterprise/remi-release-7.rpm
 
-# 2 - Update the system
-      - name: Update the system
-        apt:
-          update_cache: yes
-          upgrade: yes
-          autoremove: yes
-          autoclean: yes
+# 3 - Install yum-utils     
+  - name: Install yum-utils
+    yum:
+      name: yum-utils
+      state: present
 
-# 3 - Install the required packages
-      - name: Install the required packages
-        apt:
-          name:
-              - wget
-              - unzip
-              - curl
-              - git
-              - nginx
-              - php8.0-fpm
-              - php8.0-mysql
-              - php8.0-curl
-              - php8.0-gd
-              - php8.0-mbstring
-              - php8.0-xml
-              - php8.0-xmlrpc
-              - php8.0-soap
-              - php8.0-intl
-              - php8.0-zip
-              - php8.0-cli
-              - php8.0-redis
-              - php8.0-imap
-              - php8.0-opcache
-              - php8.0-common
-              - php8.0-pdo
-              - php8.0-mysqlnd
-              - php8.0-bcmath
-              - mysql-server
-              - mysql-client
-          state: present
+# 4 - Disable Remi PHP 
+  - name: Disable remi-php*
+    command: yum-config-manager --disable 'remi-php*'
 
+# 5 - Enable Remi PHP 8.0
+  - name: Enable remi-php80
+    command: yum-config-manager --enable remi-php80
 
-# 5 - Generating mysql user root password
-      - name: Generating user password
-        shell: openssl rand -hex 24
-        register: userpassword  
+# 6 - Install PHP and dependencies
+  - name: Install PHP and dependencies
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - php-json
+      - php-cli
+      - php-gd
+      - php-xml
+      - php-common
+      - php-pdo
+      - php-pecl-zip
+      - php-mysqlnd
+      - php-mbstring
+      - php
+      - php-bcmath
+      - php-phpiredis
+      - php-imap
+      - php-pecl-redis4
+      - php-pecl-igbinary
+      - php-geos
+      - php-fpm
+      - php-opcache
+      - MySQL-python
+      - git
 
-# 9 - Create a database user
-      - name: Create database  and user for livechat
-        command: 'mysql -ne "{{ item }}"'
-        with_items:
-            - CREATE USER 'lhcues'@'%' IDENTIFIED BY '{{userpassword.stdout}}';
-            - CREATE DATABASE lhcdb;
-            - GRANT ALL PRIVILEGES ON lhcdb.* TO 'lhcues'@'%';
-            - FLUSH PRIVILEGES;
-        changed_when: False
+# 7 - Install Nginx and screen
+  - name: Install Nginx and screen
+    yum:
+      name: "{{ item }}"
+      state: present
+      enable: yes
+    with_items:
+      - nginx
+      - screen
 
-# 10 - Download the Live Helper Chat application
-      - name: Download the Live Helper Chat application
-        get_url:
-          url: https://github.com/remdex/livehelperchat/archive/master.zip
-          dest: /tmp/livehelperchat.zip
+# 8 - Download MySQL repository RPM      
+  - name: Download MySQL repository RPM
+    get_url:
+      url: https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+      dest: /tmp/mysql80-community-release-el7-3.noarch.rpm
 
-# 11 - Unzip the Live Helper Chat application
-      - name: Unzip the Live Helper Chat application
-        unarchive:
-          src: /tmp/livehelperchat.zip
-          dest: /var/www/html
-          remote_src: yes
+# 9 - Install MySQL repository
+  - name: Install MySQL repository
+    yum:
+      name: /tmp/mysql80-community-release-el7-3.noarch.rpm
+      state: present
 
-# 12 - Set the correct permissions
-      - name: Set the correct permissions
-        file:
-          path: /var/www/html/livehelperchat-master
-          state: directory
-          mode: '0755'
-          recurse: yes
+# 10 - Import MySQL GPG key
+  - name: Import MySQL GPG key
+    rpm_key:
+      key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+      state: present
 
-# 13 - Create a virtual host
-      - name: Create a virtual host
-        template:
-          src: /usr/local/src/livehelperchat.conf.j2
-          dest: /etc/nginx/sites-available/livehelperchat.conf
-          remote_src: yes
+# 11 - Install MySQL server
+  - name: Install MySQL server
+    yum:
+      name: mysql-community-server
+      state: present
+      enable: yes
 
-# 14 - Enable the virtual host
-      - name: Enable the virtual host
-        file:
-          src: /etc/nginx/sites-available/livehelperchat.conf
-          dest: /etc/nginx/sites-enabled/livehelperchat.conf
-          state: link
+# 12 - Start MySQL service
+  - name: Start MySQL service
+    service:
+      name: mysqld
+      state: started
+      enabled: yes
 
-# 15 - Restart service 
-      - name: Restart nginx
-        service:
-          name: 
-            - nginx
-            - php8.0-fpm
-            - mysql
-          state: restarted
+# 13 - Disable Selinux
+  - name: Disable Selinux
+    selinux:
+      state: disabled
 
+# 14 - Generate a random password
+  - name: Generate a random password
+    shell: >-
+          openssl rand -hex 14
+    register: mysql_root_pass 
+
+# 15 - Get the Temporary root password
+  - name: Get the Temporary root password
+    shell: grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}'
+    register: mysql_root_password
+
+# 16 - Set the root password
+  - name: root | set root password
+    shell: >-
+          mysqladmin -u root
+          --password="{{mysql_root_password.stdout}}"
+          password "{{mysql_root_pass.stdout}}"
+
+# 17 - Create a .my.cnf file
+  - name: Create a .my.cnf file
+    file:
+      path: /root/.my.cnf
+      state: touch
+      owner: root 
+      group: root 
+      mode: 0600
+
+# 18 - Add .my.cnf
+  - name: Add .my.cnf
+    lineinfile: 
+      path: /root/.my.cnf
+      line: "{{ item }}"
+    with_items:
+      - "[client]"
+      - user=root
+      - password={{mysql_root_pass.stdout}}
+
+# 19 - Reload privilege tables
+  - name: Reload privilege tables
+    command: 'mysql -ne "{{ item }}"'
+    with_items:
+      - FLUSH PRIVILEGES
+    changed_when: False
+
+# 20 - Remove anonymous users
+  - name: Remove anonymous users
+    mysql_user:
+      login_user: root
+      login_password: "{{ mysql_root_pass.stdout }}"
+      user: ''
+      host_all: yes
+      state: absent
+
+# 21 - Disallow root login remotely
+  - name: Disallow root login remotely
+    mysql_user:
+      login_user: root
+      login_password: "{{ mysql_root_pass.stdout }}"
+      user: root
+      host: "'localhost', '127.0.0.1', '::1'"
+      state: absent
+
+# 22 - Remove test database and access to it
+  - name: Remove test database and access to it
+    mysql_db: 
+      login_user: root
+      login_password: "{{ mysql_root_pass.stdout }}"
+      db: test
+      state: absent
+    register: remove_testdb
+
+# 23 - Reload privilege tables again and change the password policy
+  - name: Reload privilege tables
+    command: 'mysql -ne "{{ item }}"'
+    with_items:
+        - SET GLOBAL validate_password_policy=LOW;
+        - FLUSH PRIVILEGES
+    changed_when: False
+
+# 24 - Create a database
+  - name: Create a database
+    mysql_db:
+      login_user: root
+      login_password: "{{ mysql_root_pass.stdout }}"
+      name: lhc
+      state: present
+
+ # 25 - Generate a random password for mysql user
+  - name: Generate a random password
+    shell: >-
+          openssl rand -hex 14
+    register: lhc_db_pass
+
+# 26 - Create a user
+  - name: Create a user
+    mysql_user:
+      login_user: root
+      login_password: "{{ mysql_root_pass.stdout }}"
+      name: lhc
+      password: "{{ lhc_db_pass.stdout }}"
+      priv: 'lhc.*:ALL'
+      state: present
+
+ # 27 - clone the Live Helper Chat application to /usr/local/src
+  - name: clone the Live Helper Chat application to /usr/local/src
+    git:
+      repo: https://github.com/LiveHelperChat/livehelperchat.git
+      dest: /usr/local/src/livehelperchat
+
+# 28 - Move the content from /usr/local/src/livehelperchat/lhc_web to /var/www/html
+  - name: Move the content from /usr/local/src/livehelperchat/lhc_web to /var/www/html
+    shell: mv /usr/local/src/livehelperchat/lhc_web/* /var/www/html     
+
+# 29 - Update the 777 permission for the following directoy's
+  - name: Set directory permissions
+    file:
+      path: "{{ item.path }}"
+      mode: "0777"
+      recurse: "{{ item.recurse | default('yes') }}"
+    with_items:
+      - { path: '/var/www/html/settings/', recurse: 'yes' }
+      - { path: '/var/www/html/var/storage', recurse: 'yes' }
+      - { path: '/var/www/html/var/userphoto', recurse: 'yes' }
+      - { path: '/var/www/html/var/storageform', recurse: 'yes' }
+      - { path: '/var/www/html/var/storageadmintheme', recurse: 'yes' }
+      - { path: '/var/www/html/var/botphoto', recurse: 'yes' }
+      - { path: '/var/www/html/var/bottrphoto', recurse: 'yes' }
+      - { path: '/var/www/html/var/storageinvitation', recurse: 'yes' }
+      - { path: '/var/www/html/var/storagedocshare', recurse: 'yes' }
+      - { path: '/var/www/html/var/storagetheme', recurse: 'yes' }
+      - { path: '/var/www/html/var/tmpfiles', recurse: 'yes' }
+
+# 30 - Move /var/www/html/cli/install-cli.php to /var/www/html
+  - name: Move /var/www/html/cli/install-cli.php to /var/www/html
+    shell: mv /var/www/html/cli/install-cli.php /var/www/html
+
+# 31 - Move /var/www/html/cli/example.settings.ini to /var/www/html/settings.ini
+  - name: Move /var/www/html/cli/example.settings.ini to /var/www/html/settings.ini
+    shell: mv /var/www/html/cli/example.settings.ini /var/www/html/settings.ini
+
+# 32 - Update the mysql details in the /var/www/html/settings.ini
+  - name: Update database details in configuration file
+    lineinfile:
+      path: /var/www/html/settings.ini
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+      state: present
+    with_items:
+      - { regexp: '^host = .*', line: 'host = localhost' }
+      - { regexp: '^user = .*', line: 'user = lhc' }
+      - { regexp: '^password = .*', line: 'password = "{{ lhc_db_pass.stdout }}"'}
+      - { regexp: '^database = .*', line: 'database = lhc' }
+      - { regexp: '^port = .*', line: 'port = 3306' }
+
+# 33 - Set up the Node.js repository for version 14.x on the system
+  - name: Set up the Node.js repository for version 14.x on the system
+    shell: curl -sL https://rpm.nodesource.com/setup_14.x | sudo bash -
+
+# 34 - Install Node.js, npm and Redis
+  - name: Install Node.js
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - nodejs
+      - npm
+      - redis
+
+# 35 - Start Redis service
+  - name: Start Redis service
+    service:
+      name: redis
+      state: started
+      enabled: yes
+
+# 36 - Clone the LiveHelperChat/NodeJS-Helper from git to /usr/local/src
+  - name: Clone the LiveHelperChat/NodeJS-Helper from git to /usr/local/src
+    git:
+      repo: https://github.com/LiveHelperChat/NodeJS-Helper.git
+      dest: /usr/local/src/NodeJS-Helper
+
+# 37 - Move the content from /usr/local/src/NodeJS-Helper to /var/www/html/extension
+  - name: Move the content from /usr/local/src/NodeJS-Helper to /var/www/html/extension
+    shell: mv /usr/local/src/NodeJS-Helper/* /var/www/html/extension/    
+
+# 38 - Install composer dependencies from /var/www/html/extension/nodejshelper
+  - name: Install composer dependencies from /var/www/html/extension/nodejshelper
+    shell: composer install
+    args:
+      chdir: /var/www/html/extension/nodejshelper
+
+# 39 - Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
+  - name: Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
+    shell: npm install
+    args:
+      chdir: /var/www/html/extension/nodejshelper/serversc/lhc
+
+  # 40 - Copy the secret hash from /var/www/html/settings/settings.ini.php 
+  - name: Retrieve secret hash from settings.ini.php
+    shell: grep "secrethash" /var/www/html/settings/settings.ini.php  | cut -d "'" -f 4
+    register: secret_hash_result
+
+# 41 - Update secret hash in server.js
+  - name: Update secret hash in server.js
+    replace:
+      path: /var/www/html/extension/nodejshelper/serversc/lhc/server.js
+      regexp: "secretHash: '<use_your_secret_hash>'"
+      replace: "secretHash: '{{ secret_hash_result.stdout }}'"
+      backup: yes
+
+# 42 - Make a copy make copy of /var/www/html/extension/nodejshelper/settings/settings.ini.default.php to /var/www/html/extension/nodejshelper/settings/settings.ini.default.php
+  - name: Make a copy of settings.ini.default.php
+    copy:
+      src: /var/www/html/extension/nodejshelper/settings/settings.ini.default.php
+      dest: /var/www/html/extension/nodejshelper/settings/settings.ini.php
+
+# 43 - Clone the LiveHelperChat/lhc-php-resque to /usr/local/src
+  - name: Clone the LiveHelperChat/lhc-php-resque to /usr/local/src
+    git:
+      repo: https://github.com/LiveHelperChat/lhc-php-resque.git
+      dest: /usr/local/src/lhc-php-resque
+
+# 44 - Move the directory from /usr/local/src/lhc-php-resque/lhcphpresque to /var/www/html/extension/
+  - name: Move the directory from /usr/local/src/lhc-php-resque/lhcphpresque to /var/www/html/extension/
+    shell: mv /usr/local/src/lhc-php-resque/lhcphpresque /var/www/html/extension/
+
+# 45 - Activate extension in settings/settings.ini.php extensions section
 
