@@ -1,5 +1,5 @@
 #!/bin/bash
 
 mkdir /opt/live-helper
-cd /opt/live-helper && git clone git://git.debian.org/git/live-helper/live-helper.git
-cd /opt/live-helper/ && 
+cd /opt/live-helper/ && git clone https://github.com/vigneshvrm/Workout.git
+cd /opt/live-helper/Workout/ && chmod +x live-helper.sh
