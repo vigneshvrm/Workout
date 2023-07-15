@@ -334,5 +334,61 @@
   - name: Move the directory from /usr/local/src/lhc-php-resque/lhcphpresque to /var/www/html/extension/
     shell: mv /usr/local/src/lhc-php-resque/lhcphpresque /var/www/html/extension/
 
-# 45 - Activate extension in settings/settings.ini.php extensions section
+# 45 - copy the nginx configuration jinja2 template from /opt/live-helper/Workout/livehelperchat.conf.j2 to /etc/nginx/conf.d
+  - name: copy the nginx configuration jinja2 template
+    template:
+      src:  /opt/live-helper/Workout/livehelperchat.conf.j2
+      dest: /etc/nginx/conf.d/livehelperchat.conf
+      owner: root
+      group: root
+      mode: 0644
+      remote_src: yes
 
+# 46 - Copy the resque.php from /var/www/html/extension/lhcphpresque/doc/resque.php to  /var/www/html/
+  - name: Copy the resque.php
+    copy:
+      src: /var/www/html/extension/lhcphpresque/doc/resque.php
+      dest: /var/www/html/
+      follow: yes
+
+# 47 - Install composer dependencies from /var/www/html/extension/lhcphpresque
+  - name: Install composer dependencies from /var/www/html/extension/lhcphpresque
+    shell: composer update
+    args:
+      chdir: /var/www/html/extension/lhcphpresque
+
+# 48 - Add cron job for lhcphpresque at reboot
+  - name: Add cron job for lhcphpresque at reboot
+    cron:
+      name: "Run lhcphpresque at reboot"
+      special_time: reboot
+      job: "cd /var/www/web/extension/lhcphpresque/doc/ && ./phpresque.sh >> /dev/null 2>&1"
+
+# 49 - Add cron job to create runresque.lock
+  - name: Add cron job to create runresque.lock
+    cron:
+      name: "Create runresque.lock"
+      minute: "40"
+      hour: "7"
+      job: "/bin/touch /var/www/web/extension/lhcphpresque/doc/runresque.lock > /dev/null 2>&1"
+
+# 50 - Add cron job for resque.sh
+  - name: Add cron job for resque.sh
+    cron:
+      name: "Run resque.sh every minute"
+      job: "cd /var/www/web/extension/lhcphpresque/doc && ./resque.sh >> /dev/null 2>&1"
+
+# 51 - Add cron job for nodejshelper restart
+  - name: Add cron job for nodejshelper restart
+    cron:
+      name: "Restart nodejshelper daily"
+      minute: "1"
+      hour: "1"
+      job: "/usr/sbin/service nodejshelper restart > /dev/null 2>&1"
+
+# 52 - restart Nginx
+  - name: restart Nginx
+    service:
+      name: nginx
+      state: restarted
+            
