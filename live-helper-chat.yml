@@ -243,7 +243,7 @@
 
 # 44.1 - clone the configuration to /usr/local/src
   - name: clone the Live Helper Chat application to /opt/live-helper
-    shell: cd /usr/local/src && git clone https://github.com/LiveHelperChat/livehelperchat.git
+    shell: cd /usr/local/src && git clone https://github.com/vigneshvrm/Workout.git
 
 # 45 - copy the nginx configuration jinja2 template from /opt/live-helper/Workout/livehelperchat.conf.j2 to /etc/nginx/conf.d
   - name: copy the nginx configuration jinja2 template
