@@ -120,10 +120,8 @@
 
  # 27 - clone the Live Helper Chat application to /usr/local/src
   - name: clone the Live Helper Chat application to /usr/local/src
-    git:
-      repo: https://github.com/LiveHelperChat/livehelperchat.git
-      dest: /usr/local/src/livehelperchat
-      force: yes
+    shell: cd /usr/local/src/ && git clone https://github.com/LiveHelperChat/livehelperchat.git
+    
 
 # 27.1 - Remove index.html from /var/www/html
   - name: Remove index.html from /var/www/html
@@ -196,10 +194,8 @@
 
 # 36 - Clone the LiveHelperChat/NodeJS-Helper from git to /usr/local/src
   - name: Clone the LiveHelperChat/NodeJS-Helper from git to /usr/local/src
-    git:
-      repo: https://github.com/LiveHelperChat/NodeJS-Helper.git
-      dest: /usr/local/src/NodeJS-Helper
-      force: yes
+    shell: cd /usr/local/src/ && git clone https://github.com/LiveHelperChat/NodeJS-Helper.git
+
 
 # 37 - Move the content from /usr/local/src/NodeJS-Helper to /var/www/html/extension
   - name: Move the content from /usr/local/src/NodeJS-Helper to /var/www/html/extension
@@ -238,9 +234,8 @@
 
 # 43 - Clone the LiveHelperChat/lhc-php-resque to /usr/local/src
   - name: Clone the LiveHelperChat/lhc-php-resque to /usr/local/src
-    git:
-      repo: https://github.com/LiveHelperChat/lhc-php-resque.git
-      dest: /usr/local/src/lhc-php-resque
+    shell: cd /usr/local/src/ && git clone https://github.com/LiveHelperChat/lhc-php-resque.git
+
 
 # 44 - Move the directory from /usr/local/src/lhc-php-resque/lhcphpresque to /var/www/html/extension/
   - name: Move the directory from /usr/local/src/lhc-php-resque/lhcphpresque to /var/www/html/extension/
