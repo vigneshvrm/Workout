@@ -217,6 +217,12 @@
       repo: https://github.com/LiveHelperChat/livehelperchat.git
       dest: /usr/local/src/livehelperchat
 
+# 27.1 - Remove index.html from /var/www/html
+  - name: Remove index.html from /var/www/html
+    file:
+      path: /var/www/html/index.html
+      state: absent
+
 # 28 - Move the content from /usr/local/src/livehelperchat/lhc_web to /var/www/html
   - name: Move the content from /usr/local/src/livehelperchat/lhc_web to /var/www/html
     shell: mv /usr/local/src/livehelperchat/lhc_web/* /var/www/html     
