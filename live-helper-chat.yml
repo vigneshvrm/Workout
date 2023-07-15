@@ -241,10 +241,14 @@
   - name: Move the directory from /usr/local/src/lhc-php-resque/lhcphpresque to /var/www/html/extension/
     shell: mv /usr/local/src/lhc-php-resque/lhcphpresque /var/www/html/extension/
 
+# 44.1 - clone the configuration to /usr/local/src
+  - name: clone the Live Helper Chat application to /opt/live-helper
+    shell: cd /usr/local/src && git clone https://github.com/LiveHelperChat/livehelperchat.git
+
 # 45 - copy the nginx configuration jinja2 template from /opt/live-helper/Workout/livehelperchat.conf.j2 to /etc/nginx/conf.d
   - name: copy the nginx configuration jinja2 template
     copy:
-      src:  /opt/live-helper/Workout/livehelperchat.conf
+      src:  /usr/local/src/Workout/livehelperchat.conf
       dest: /etc/nginx/conf.d/
       remote_src: yes
 
