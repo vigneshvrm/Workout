@@ -4,6 +4,10 @@
   hosts: localhost
   tasks:
 
+# 0 - Disable ssh access and restart the ssh service
+  - name: Restarting sshd
+    shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
+
 # 1 - Update the system
   - name: Update the system
     apt:
@@ -11,7 +15,7 @@
       state: latest
       update_cache: yes
 
-# 6 - Install PHP and dependencies
+# 2 - Install PHP and dependencies
   - name: Install PHP and dependencies
     apt:
       name: "{{ item }}"
@@ -33,51 +37,64 @@
       - php-opcache
       - git
       - curl
+      - php-curl
+      - certbot 
+      - python3-certbot-nginx
 
-# 2 - Download and install Composer
+
+# 3 - Download and install Composer
   - name: Download and install Composer
     shell: curl -sS https://getcomposer.org/installer -o composer-setup.php
     args:
-      chdir: /tmp
+      chdir: /usr/local/src/
 
-# 3 - Install Composer
+# 4 - Install Composer
   - name: Install Composer
-    shell: php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    shell: php /usr/local/src/composer-setup.php --install-dir=/usr/local/bin --filename=composer
 
-# 7 - Install Nginx and screen
+# 5 - Install Nginx and screen
   - name: Install Nginx and screen
     apt:
       name: nginx
       state: latest
 
-# 11 - Install MySQL server
+# 6 - Install MySQL server
   - name: Install MySQL server
     apt:
       name: mysql-server
       state: present
 
-# 12 - Start MySQL service
+# 7 - Start MySQL service
   - name: Start MySQL service
     service:
       name: mysql
       state: started
       enabled: yes
 
-# 14 - Generate a random password
+# 8 - Generate a random password
   - name: Generate a random password
     shell: >-
           openssl rand -hex 14
     register: mysql_root_pass
 
 
-# 16 - Set the root password
+# 9 - copy the mysql root password to a file in /root/.mysql_root_pass
+  - name: copy the mysql root password to a file in /root/.mysql_root_pass
+    copy:
+      content: "{{ mysql_root_pass.stdout }}"
+      dest: /root/.mysql_root_pass
+      owner: root
+      group: root
+      mode: 0600
+
+# 10 - Set the root password
   - name: root | set root password
     shell: >-
           mysqladmin -u root
           --password=''
           password "{{mysql_root_pass.stdout}}"
 
-# 17 - Create a .my.cnf file
+# 11 - Create a .my.cnf file
   - name: Create a .my.cnf file
     file:
       path: /root/.my.cnf
@@ -86,7 +103,7 @@
       group: root
       mode: 0600
 
-# 18 - Add .my.cnf
+# 12 - Add .my.cnf
   - name: Add .my.cnf
     lineinfile:
       path: /root/.my.cnf
@@ -96,20 +113,29 @@
       - user=root
       - password={{mysql_root_pass.stdout}}
 
-# 19 - Reload privilege tables
+# 13 - Reload privilege tables
   - name: Reload privilege tables
     command: 'mysql -ne "{{ item }}"'
     with_items:
       - FLUSH PRIVILEGES
     changed_when: False
 
- # 25 - Generate a random password for mysql user
+ # 14 - Generate a random password for mysql user
   - name: Generate a random password
     shell: >-
           openssl rand -hex 14
     register: lhc_db_pass
 
-# 26 - Add the lhc database and user
+ # 15 - copy the mysql user password to a file in /root/.lhc_db_pass
+  - name: copy the mysql user password to a file in /root/.lhc_db_pass
+    copy:
+      content: "{{ lhc_db_pass.stdout }}"
+      dest: /root/.lhc_db_pass
+      owner: root
+      group: root
+      mode: 0600
+
+# 16 - Add the lhc database and user
   - name: Add the lhc database
     command: 'mysql -ne "{{ item }}"'
     with_items:
@@ -118,22 +144,22 @@
         - GRANT ALL PRIVILEGES ON lhc.* TO 'lhc'@'%';
         - FLUSH PRIVILEGES;
 
- # 27 - clone the Live Helper Chat application to /usr/local/src
+ # 17 - clone the Live Helper Chat application to /usr/local/src
   - name: clone the Live Helper Chat application to /usr/local/src
     shell: cd /usr/local/src/ && git clone https://github.com/LiveHelperChat/livehelperchat.git
     
 
-# 27.1 - Remove index.html from /var/www/html
+# 18 - Remove index.html from /var/www/html
   - name: Remove index.html from /var/www/html
     file:
       path: /var/www/html/index.html
       state: absent
 
-# 28 - Move the content from /usr/local/src/livehelperchat/lhc_web to /var/www/html
+# 19 - Move the content from /usr/local/src/livehelperchat/lhc_web to /var/www/html
   - name: Move the content from /usr/local/src/livehelperchat/lhc_web to /var/www/html
     shell: mv /usr/local/src/livehelperchat/lhc_web/* /var/www/html
 
-# 29 - Update the 777 permission for the following directoy's
+# 20 - Update the 777 permission for the following directoy's
   - name: Set directory permissions
     file:
       path: "{{ item.path }}"
@@ -152,15 +178,15 @@
       - { path: '/var/www/html/var/storagetheme', recurse: 'yes' }
       - { path: '/var/www/html/var/tmpfiles', recurse: 'yes' }
 
-# 30 - Move /var/www/html/cli/install-cli.php to /var/www/html
+# 21 - Move /var/www/html/cli/install-cli.php to /var/www/html
   - name: Move /var/www/html/cli/install-cli.php to /var/www/html
     shell: mv /var/www/html/cli/install-cli.php /var/www/html
 
-# 31 - Move /var/www/html/cli/example.settings.ini to /var/www/html/settings.ini
+# 22 - Move /var/www/html/cli/example.settings.ini to /var/www/html/settings.ini
   - name: Move /var/www/html/cli/example.settings.ini to /var/www/html/settings.ini
     shell: mv /var/www/html/cli/example.settings.ini /var/www/html/settings.ini
 
-# 32 - Update the mysql details in the /var/www/html/settings.ini
+# 23 - Update the mysql details in the /var/www/html/settings.ini
   - name: Update database details in configuration file
     lineinfile:
       path: /var/www/html/settings.ini
@@ -175,7 +201,7 @@
       - { regexp: '^port = .*', line: 'port = 3306' }
 
 
-# 34 - Install Node.js, npm and Redis
+# 24 - Install Node.js, npm and Redis
   - name: Install Node.js
     apt:
       name: "{{ item }}"
@@ -185,40 +211,40 @@
       - npm
       - redis
 
-# 35 - Start Redis service
+# 25 - Start Redis service
   - name: Start Redis service
     service:
       name: redis
       state: started
       enabled: yes
 
-# 36 - Clone the LiveHelperChat/NodeJS-Helper from git to /usr/local/src
+# 26 - Clone the LiveHelperChat/NodeJS-Helper from git to /usr/local/src
   - name: Clone the LiveHelperChat/NodeJS-Helper from git to /usr/local/src
     shell: cd /usr/local/src/ && git clone https://github.com/LiveHelperChat/NodeJS-Helper.git
 
 
-# 37 - Move the content from /usr/local/src/NodeJS-Helper to /var/www/html/extension
+# 27 - Move the content from /usr/local/src/NodeJS-Helper to /var/www/html/extension
   - name: Move the content from /usr/local/src/NodeJS-Helper to /var/www/html/extension
     shell: mv /usr/local/src/NodeJS-Helper/nodejshelper /var/www/html/extension/
 
-# 38 - Install composer dependencies from /var/www/html/extension/nodejshelper
+# 28 - Install composer dependencies from /var/www/html/extension/nodejshelper
   - name: Install composer dependencies from /var/www/html/extension/nodejshelper
     shell: composer install
     args:
       chdir: /var/www/html/extension/nodejshelper
 
-# 39 - Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
+# 29 - Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
   - name: Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
     shell: npm install
     args:
       chdir: /var/www/html/extension/nodejshelper/serversc/lhc
 
-  # 40 - Copy the secret hash from /var/www/html/settings/settings.ini.php
+# 30 - Copy the secret hash from /var/www/html/settings/settings.ini.php
   - name: Retrieve secret hash from settings.ini.php
     shell: grep "secrethash" /var/www/html/settings/settings.ini.php  | cut -d "'" -f 4
     register: secret_hash_result
 
-# 41 - Update secret hash in server.js
+# 31 - Update secret hash in server.js
   - name: Update secret hash in server.js
     replace:
       path: /var/www/html/extension/nodejshelper/serversc/lhc/server.js
@@ -226,53 +252,53 @@
       replace: "secretHash: '{{ secret_hash_result.stdout }}'"
       backup: yes
 
-# 42 - Make a copy make copy of /var/www/html/extension/nodejshelper/settings/settings.ini.default.php to /var/www/html/extension/nodejshelper/settings/settings.ini.default.php
+# 32 - Make a copy make copy of /var/www/html/extension/nodejshelper/settings/settings.ini.default.php to /var/www/html/extension/nodejshelper/settings/settings.ini.default.php
   - name: Make a copy of settings.ini.default.php
     copy:
       src: /var/www/html/extension/nodejshelper/settings/settings.ini.default.php
       dest: /var/www/html/extension/nodejshelper/settings/settings.ini.php
 
-# 43 - Clone the LiveHelperChat/lhc-php-resque to /usr/local/src
+# 33 - Clone the LiveHelperChat/lhc-php-resque to /usr/local/src
   - name: Clone the LiveHelperChat/lhc-php-resque to /usr/local/src
     shell: cd /usr/local/src/ && git clone https://github.com/LiveHelperChat/lhc-php-resque.git
 
 
-# 44 - Move the directory from /usr/local/src/lhc-php-resque/lhcphpresque to /var/www/html/extension/
+# 34 - Move the directory from /usr/local/src/lhc-php-resque/lhcphpresque to /var/www/html/extension/
   - name: Move the directory from /usr/local/src/lhc-php-resque/lhcphpresque to /var/www/html/extension/
     shell: mv /usr/local/src/lhc-php-resque/lhcphpresque /var/www/html/extension/
 
-# 44.1 - clone the configuration to /usr/local/src
+# 35 - clone the configuration to /usr/local/src
   - name: clone the Live Helper Chat application to /opt/live-helper
     shell: cd /usr/local/src && git clone https://github.com/vigneshvrm/Workout.git
 
-# 45 - copy the nginx configuration jinja2 template from /opt/live-helper/Workout/livehelperchat.conf.j2 to /etc/nginx/conf.d
+# 36 - copy the nginx configuration jinja2 template from /opt/live-helper/Workout/livehelperchat.conf.j2 to /etc/nginx/conf.d
   - name: copy the nginx configuration jinja2 template
     copy:
       src:  /usr/local/src/Workout/livehelperchat.conf
       dest: /etc/nginx/conf.d/
       remote_src: yes
 
-# 46 - Copy the resque.php from /var/www/html/extension/lhcphpresque/doc/resque.php to  /var/www/html/
+# 37 - Copy the resque.php from /var/www/html/extension/lhcphpresque/doc/resque.php to  /var/www/html/
   - name: Copy the resque.php
     copy:
       src: /var/www/html/extension/lhcphpresque/doc/resque.php
       dest: /var/www/html/
       follow: yes
 
-# 47 - Install composer dependencies from /var/www/html/extension/lhcphpresque
+# 38 - Install composer dependencies from /var/www/html/extension/lhcphpresque
   - name: Install composer dependencies from /var/www/html/extension/lhcphpresque
     shell: composer update
     args:
       chdir: /var/www/html/extension/lhcphpresque
 
-# 48 - Add cron job for lhcphpresque at reboot
+# 39 - Add cron job for lhcphpresque at reboot
   - name: Add cron job for lhcphpresque at reboot
     cron:
       name: "Run lhcphpresque at reboot"
       special_time: reboot
       job: "cd /var/www/web/extension/lhcphpresque/doc/ && ./phpresque.sh >> /dev/null 2>&1"
 
-# 49 - Add cron job to create runresque.lock
+# 40 - Add cron job to create runresque.lock
   - name: Add cron job to create runresque.lock
     cron:
       name: "Create runresque.lock"
@@ -280,13 +306,13 @@
       hour: "7"
       job: "/bin/touch /var/www/web/extension/lhcphpresque/doc/runresque.lock > /dev/null 2>&1"
 
-# 50 - Add cron job for resque.sh
+# 41 - Add cron job for resque.sh
   - name: Add cron job for resque.sh
     cron:
       name: "Run resque.sh every minute"
       job: "cd /var/www/web/extension/lhcphpresque/doc && ./resque.sh >> /dev/null 2>&1"
 
-# 51 - Add cron job for nodejshelper restart
+# 42 - Add cron job for nodejshelper restart
   - name: Add cron job for nodejshelper restart
     cron:
       name: "Restart nodejshelper daily"
@@ -294,8 +320,33 @@
       hour: "1"
       job: "/usr/sbin/service nodejshelper restart > /dev/null 2>&1"
 
-# 52 - restart Nginx
+# 43 - restart Nginx
   - name: restart Nginx
     service:
       name: nginx
       state: restarted
+
+# 44 - create a cloudstack directory
+  - name: Creating a directory for shell script
+    ansible.builtin.file:
+      path: /opt/cloudstack
+      state: directory         
+
+ # 45 - copy the shell script from /opt/live-helper/Workout/live-helper.sh to /opt/cloudstack     
+  - name: Copy files for shell script
+    copy:
+      src: "{{ item.confsrc }}"
+      dest: "{{ item.confdest }}"
+    with_items: 
+      - { confsrc: '/opt/live-helper/Workout/live-helper.sh', confdest: '/opt/cloudstack/'}     
+
+# 46 - Add the shell script to .bashrc
+  - name: Adding a line for shell script
+    lineinfile:
+      path: /root/.bashrc
+      line: "chmod +x /opt/cloudstack/live-helper.sh && /opt/cloudstack/live-helper.sh"
+      state: present
+
+ # 47 - Enable the ssh  acess and restart the sshd service   
+  - name: Restarting sshd
+    shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
