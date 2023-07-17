@@ -230,7 +230,7 @@
 
 # 28 - Install composer dependencies from /var/www/html/extension/nodejshelper
   - name: Install composer dependencies from /var/www/html/extension/nodejshelper
-    shell: cd /var/www/html/extension/nodejshelper && composer install
+    shell: sudo  cd /var/www/html/extension/nodejshelper && composer install --no-interaction
 
 # 29 - Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
   - name: Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
