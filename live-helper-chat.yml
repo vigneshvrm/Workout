@@ -148,11 +148,11 @@
     shell: cd /usr/local/src/ && git clone https://github.com/LiveHelperChat/livehelperchat.git
     
 
-# 18 - Remove index.html from /var/www/html
-  - name: Remove index.html from /var/www/html
+# 18 - Remove nginx index.html from /var/www/html
+  - name: Remove nginx index.html from /var/www/html
     file:
-      path: /var/www/html/index.html
-      state: absent
+      path: /var/www/html/index.nginx-debian.html
+      state: absent 
 
 # 19 - Move the content from /usr/local/src/livehelperchat/lhc_web to /var/www/html
   - name: Move the content from /usr/local/src/livehelperchat/lhc_web to /var/www/html
@@ -323,20 +323,23 @@
       minute: "1"
       hour: "1"
       job: "/usr/sbin/service nodejshelper restart > /dev/null 2>&1"
+# 43 - change owner ship of /var/www/html
+  - name: change owner ship of /var/www/html
+    shell: chown -R www-data. /var/www/html
 
-# 43 - restart Nginx
+# 44 - restart Nginx
   - name: restart Nginx
     service:
       name: nginx
       state: restarted
 
-# 44 - create a cloudstack directory
+# 45 - create a cloudstack directory
   - name: Creating a directory for shell script
     ansible.builtin.file:
       path: /opt/cloudstack
       state: directory         
 
- # 45 - copy the shell script from /opt/live-helper/Workout/live-helper.sh to /opt/cloudstack     
+ # 46 - copy the shell script from /opt/live-helper/Workout/live-helper.sh to /opt/cloudstack     
   - name: Copy files for shell script
     copy:
       src: "{{ item.confsrc }}"
@@ -344,13 +347,13 @@
     with_items: 
       - { confsrc: '/opt/live-helper/Workout/live-helper.sh', confdest: '/opt/cloudstack/'}     
 
-# 46 - Add the shell script to .bashrc
+# 47 - Add the shell script to .bashrc
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
       line: "chmod +x /opt/cloudstack/live-helper.sh && /opt/cloudstack/live-helper.sh"
       state: present
 
- # 47 - Enable the ssh  acess and restart the sshd service   
+ # 48 - Enable the ssh  acess and restart the sshd service   
   - name: Restarting sshd
     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
