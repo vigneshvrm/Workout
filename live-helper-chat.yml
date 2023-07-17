@@ -230,15 +230,11 @@
 
 # 28 - Install composer dependencies from /var/www/html/extension/nodejshelper
   - name: Install composer dependencies from /var/www/html/extension/nodejshelper
-    shell: composer install
-    args:
-      chdir: /var/www/html/extension/nodejshelper
+    shell: cd /var/www/html/extension/nodejshelper && composer install
 
 # 29 - Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
   - name: Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
-    shell: npm install
-    args:
-      chdir: /var/www/html/extension/nodejshelper/serversc/lhc
+    shell: cd /var/www/html/extension/nodejshelper/serversc/lhc && npm install
 
 # 30 - Copy the secret hash from /var/www/html/settings/settings.ini.php
   - name: Retrieve secret hash from settings.ini.php
@@ -288,9 +284,7 @@
 
 # 38 - Install composer dependencies from /var/www/html/extension/lhcphpresque
   - name: Install composer dependencies from /var/www/html/extension/lhcphpresque
-    shell: composer update
-    args:
-      chdir: /var/www/html/extension/lhcphpresque
+    shell: cd /var/www/html/extension/lhcphpresque && composer update
 
 # 39 - Add cron job for lhcphpresque at reboot
   - name: Add cron job for lhcphpresque at reboot
