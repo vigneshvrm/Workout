@@ -124,6 +124,7 @@ cd /var/www/html/ && php install-cli.php /var/www/html/settings.ini
 
 # Start NodeJS Helper server
 systemctl restart nodejshelper
+systemctl restart nginx
 systemctl enable nodejshelper
 
 
