@@ -163,16 +163,7 @@
     command: chmod -R 777 "{{ item.path }}"
     with_items:
       - { path: '/var/www/html/settings/' }
-      - { path: '/var/www/html/var/storage' }
-      - { path: '/var/www/html/var/userphoto' }
-      - { path: '/var/www/html/var/storageform' }
-      - { path: '/var/www/html/var/storageadmintheme' }
-      - { path: '/var/www/html/var/botphoto' }
-      - { path: '/var/www/html/var/bottrphoto' }
-      - { path: '/var/www/html/var/storageinvitation' }
-      - { path: '/var/www/html/var/storagedocshare' }
-      - { path: '/var/www/html/var/storagetheme' }
-      - { path: '/var/www/html/var/tmpfiles' }
+      - { path: '/var/www/html/var' }
       - { path: '/var/www/html/cache' }
 
 
