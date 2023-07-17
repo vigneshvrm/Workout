@@ -237,7 +237,7 @@
     environment:
       HOME: /var/www/html/
 
-      
+
 # 29 - Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
   - name: Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
     shell: cd /var/www/html/extension/nodejshelper/serversc/lhc && npm install
@@ -270,9 +270,9 @@
   - name: Move the directory from /usr/local/src/lhc-php-resque/lhcphpresque to /var/www/html/extension/
     shell: mv /usr/local/src/lhc-php-resque/lhcphpresque /var/www/html/extension/
 
-# 35 - clone the configuration to /usr/local/src
-  - name: clone the Live Helper Chat application to /opt/live-helper
-    shell: cd /usr/local/src && git clone https://github.com/vigneshvrm/Workout.git
+# # 35 - clone the configuration to /usr/local/src
+#   - name: clone the Live Helper Chat application to /opt/live-helper
+#     shell: cd /usr/local/src && git clone https://github.com/vigneshvrm/Workout.git
 
 # 36 - copy the nginx configuration jinja2 template from /opt/live-helper/Workout/livehelperchat.conf.j2 to /etc/nginx/conf.d
   - name: copy the nginx configuration jinja2 template
