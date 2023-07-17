@@ -126,8 +126,6 @@ cd /var/www/html/ && php install-cli.php /var/www/html/settings.ini
 systemctl restart nodejshelper
 systemctl enable nodejshelper
 
-# Start Co-Browsing server
-systemctl restart nodejscobrowser
 
 #Cleanup script
 rm -rf /usr/local/src/
