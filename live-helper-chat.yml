@@ -355,6 +355,13 @@
       line: "chmod +x /opt/cloudstack/live-helper.sh && /opt/cloudstack/live-helper.sh"
       state: present
 
- # 48 - Enable the ssh  acess and restart the sshd service   
+# 48 - copy the nodejshelper.service from /usr/local/src/Workout/nodejshelper.service to /etc/systemd/system
+  - name: copy the nodejshelper.service
+    copy:
+      src:  /usr/local/src/Workout/nodejshelper.service
+      dest: /etc/systemd/system/
+      remote_src: yes
+
+ # 49 - Enable the ssh  acess and restart the sshd service   
   - name: Restarting sshd
     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
