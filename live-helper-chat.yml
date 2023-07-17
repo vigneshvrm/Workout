@@ -151,8 +151,12 @@
 # 18 - Remove nginx index.html from /var/www/html
   - name: Remove nginx index.html from /var/www/html
     file:
-      path: /var/www/html/index.nginx-debian.html
-      state: absent 
+      path: /var/www/html/{{ item }}
+      state: absent
+    with_items:
+      - index.html
+      - index.nginx-debian.html
+
 
 # 19 - Move the content from /usr/local/src/livehelperchat/lhc_web to /var/www/html
   - name: Move the content from /usr/local/src/livehelperchat/lhc_web to /var/www/html
