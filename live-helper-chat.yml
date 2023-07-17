@@ -11,10 +11,7 @@
 
 # 1 - Update the system
   - name: Update the system
-    apt:
-      name: '*'
-      state: latest
-      update_cache: yes
+    shell: apt update && apt upgrade -y
 
 # 2 - Install PHP and dependencies
   - name: Install PHP and dependencies
