@@ -111,12 +111,12 @@ echo -en "Completing the configuration of Live Helper Chat."
 
 # populate the Live Helper Chat config file with user variables
 
-sed -e "s/default_username/$username/g" \
-    -e "s/default_password/$pass/g" \
-    -e "s/default_email/$email/g" \
-    -e "s/default_departament/$department/g" \
-    -e "s/domain_name_here/$dom/g" \
-    -i /var/www/html/settings.ini
+sudo sed -e "s/default_username/$username/g" \
+         -e "s/default_password/$pass/g" \
+         -e "s/default_email/$email/g" \
+         -e "s/default_departament/$department/g" \
+         -e "s/domain_name_here/$dom/g" \
+          -i /var/www/html/settings.ini
 
 # Finish installation
 cd /var/www/html/ && php install-cli.php /var/www/html/settings.ini
