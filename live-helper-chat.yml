@@ -332,7 +332,7 @@
     service:
       name: apache2
       state: stopped
-      
+
 # 44 - restart Nginx
   - name: restart Nginx
     service:
@@ -351,7 +351,8 @@
       src: "{{ item.confsrc }}"
       dest: "{{ item.confdest }}"
     with_items: 
-      - { confsrc: '/opt/live-helper/Workout/live-helper.sh', confdest: '/opt/cloudstack/'}     
+      - { confsrc: '/var/www/html/Workout/live-helper.sh', confdest: '/opt/cloudstack/'}  
+    remote_src: yes   
 
 # 47 - Add the shell script to .bashrc
   - name: Adding a line for shell script
