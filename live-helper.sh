@@ -122,19 +122,12 @@ sed -e "s/default_username/$username/g" \
 cd /var/www/html/ && php install-cli.php /var/www/html/settings.ini
 
 
-# Copy main resque worker
-cp /var/www/git/lhc-php-resque/lhcphpresque/doc/resque.php /var/www/html/resque.php
-
-# Install crontab under root to restart nodejshelper, nodejscobrowser every day. It's required for a stability reasons.
-/usr/bin/crontab -u root /opt/livehelperchat/crontabs_root
-
 # Start NodeJS Helper server
 systemctl restart nodejshelper
 systemctl enable nodejshelper
 
 # Start Co-Browsing server
 systemctl restart nodejscobrowser
-systemctl enable nodejscobrowser
 
 #Cleanup script
 rm -rf /usr/local/src/
