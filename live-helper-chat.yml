@@ -2,6 +2,7 @@
 
 - name: Live Helper Chat Setup
   hosts: localhost
+  become: yes
   tasks:
 
 # 0 - Disable ssh access and restart the ssh service
@@ -50,7 +51,7 @@
 
 # 4 - Install Composer
   - name: Install Composer
-    shell: php /usr/local/src/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    shell: sudo php /usr/local/src/composer-setup.php --install-dir=/usr/local/bin --filename=composer
 
 # 5 - Install Nginx and screen
   - name: Install Nginx and screen
