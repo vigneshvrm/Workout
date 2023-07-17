@@ -10,8 +10,9 @@
     shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
 
 # 1 - Update the system
-  - name: Update the system
-    shell: apt update && apt upgrade -y
+  - name: Updating Packages
+    ansible.builtin.apt:
+      update_cache: yes
 
 # 2 - Install PHP and dependencies
   - name: Install PHP and dependencies
