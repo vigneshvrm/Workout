@@ -230,8 +230,14 @@
 
 # 28 - Install composer dependencies from /var/www/html/extension/nodejshelper
   - name: Install composer dependencies from /var/www/html/extension/nodejshelper
-    shell: cd /var/www/html/extension/nodejshelper && composer install --no-interaction
+    # shell: cd /var/www/html/extension/nodejshelper && composer install --no-interaction
+    command: composer install --no-interaction
+    args:
+      chdir: /var/www/html/extension/nodejshelper
+    environment:
+      HOME: /var/www/html/
 
+      
 # 29 - Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
   - name: Install npm dependencies from /var/www/html/extension/nodejshelper/serversc/lhc
     shell: cd /var/www/html/extension/nodejshelper/serversc/lhc && npm install
