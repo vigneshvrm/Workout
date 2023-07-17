@@ -352,7 +352,7 @@
       dest: "{{ item.confdest }}"
       remote_src: yes   
     with_items: 
-      - { confsrc: '/var/www/html/Workout/live-helper.sh', confdest: '/opt/cloudstack/'}  
+      - { confsrc: '/usr/local/src/Workout/live-helper.sh', confdest: '/opt/cloudstack/'}  
 
 # 47 - Add the shell script to .bashrc
   - name: Adding a line for shell script
