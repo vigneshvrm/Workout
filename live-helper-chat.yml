@@ -160,22 +160,21 @@
 
 # 20 - Update the 777 permission for the following directoy's
   - name: Set directory permissions
-    file:
-      path: "{{ item.path }}"
-      mode: "0777"
-      recurse: "{{ item.recurse | default('yes') }}"
+    command: chmod -R 777 "{{ item.path }}"
     with_items:
-      - { path: '/var/www/html/settings/', recurse: 'yes' }
-      - { path: '/var/www/html/var/storage', recurse: 'yes' }
-      - { path: '/var/www/html/var/userphoto', recurse: 'yes' }
-      - { path: '/var/www/html/var/storageform', recurse: 'yes' }
-      - { path: '/var/www/html/var/storageadmintheme', recurse: 'yes' }
-      - { path: '/var/www/html/var/botphoto', recurse: 'yes' }
-      - { path: '/var/www/html/var/bottrphoto', recurse: 'yes' }
-      - { path: '/var/www/html/var/storageinvitation', recurse: 'yes' }
-      - { path: '/var/www/html/var/storagedocshare', recurse: 'yes' }
-      - { path: '/var/www/html/var/storagetheme', recurse: 'yes' }
-      - { path: '/var/www/html/var/tmpfiles', recurse: 'yes' }
+      - { path: '/var/www/html/settings/' }
+      - { path: '/var/www/html/var/storage' }
+      - { path: '/var/www/html/var/userphoto' }
+      - { path: '/var/www/html/var/storageform' }
+      - { path: '/var/www/html/var/storageadmintheme' }
+      - { path: '/var/www/html/var/botphoto' }
+      - { path: '/var/www/html/var/bottrphoto' }
+      - { path: '/var/www/html/var/storageinvitation' }
+      - { path: '/var/www/html/var/storagedocshare' }
+      - { path: '/var/www/html/var/storagetheme' }
+      - { path: '/var/www/html/var/tmpfiles' }
+      - { path: '/var/www/html/cache' }
+
 
 # 21 - Move /var/www/html/cli/install-cli.php to /var/www/html
   - name: Move /var/www/html/cli/install-cli.php to /var/www/html
