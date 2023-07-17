@@ -286,8 +286,13 @@
       follow: yes
 
 # 38 - Install composer dependencies from /var/www/html/extension/lhcphpresque
-  - name: Install composer dependencies from /var/www/html/extension/lhcphpresque
-    shell: cd /var/www/html/extension/lhcphpresque && composer update
+  - name: Install composer dependencies from /var/www/html/extension/lhcphpresque/doc/resque.php
+    # shell: cd /var/www/html/extension/lhcphpresque && composer update
+    command: composer update --no-interaction
+    args:
+      chdir: /var/www/html/extension/lhcphpresque
+    environment:
+      HOME: /var/www/html/
 
 # 39 - Add cron job for lhcphpresque at reboot
   - name: Add cron job for lhcphpresque at reboot
