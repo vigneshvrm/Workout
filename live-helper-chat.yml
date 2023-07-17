@@ -327,6 +327,12 @@
   - name: change owner ship of /var/www/html
     shell: chown -R www-data. /var/www/html
 
+# 43.1 - Stop apache2 service
+  - name: Stop apache2 service
+    service:
+      name: apache2
+      state: stopped
+      
 # 44 - restart Nginx
   - name: restart Nginx
     service:
