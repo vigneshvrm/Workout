@@ -327,19 +327,26 @@
       name: apache2
       state: stopped
 
-# 44 - restart Nginx
+# 44 - copy the nodejshelper.service from /usr/local/src/Workout/nodejshelper.service to /etc/systemd/system
+  - name: copy the nodejshelper.service
+    copy:
+      src:  /usr/local/src/Workout/nodejshelper.service
+      dest: /etc/systemd/system/
+      remote_src: yes
+
+# 45 - restart Nginx
   - name: restart Nginx
     service:
       name: nginx
       state: restarted
 
-# 45 - create a cloudstack directory
+# 46 - create a cloudstack directory
   - name: Creating a directory for shell script
     ansible.builtin.file:
       path: /opt/cloudstack
       state: directory         
 
- # 46 - copy the shell script from /opt/live-helper/Workout/live-helper.sh to /opt/cloudstack     
+ # 47 - copy the shell script from /opt/live-helper/Workout/live-helper.sh to /opt/cloudstack     
   - name: Copy files for shell script
     copy:
       src: "{{ item.confsrc }}"
@@ -348,19 +355,12 @@
     with_items: 
       - { confsrc: '/usr/local/src/Workout/live-helper.sh', confdest: '/opt/cloudstack/'}  
 
-# 47 - Add the shell script to .bashrc
+# 48 - Add the shell script to .bashrc
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
       line: "chmod +x /opt/cloudstack/live-helper.sh && /opt/cloudstack/live-helper.sh"
       state: present
-
-# 48 - copy the nodejshelper.service from /usr/local/src/Workout/nodejshelper.service to /etc/systemd/system
-  - name: copy the nodejshelper.service
-    copy:
-      src:  /usr/local/src/Workout/nodejshelper.service
-      dest: /etc/systemd/system/
-      remote_src: yes
 
  # 49 - Enable the ssh  acess and restart the sshd service   
   - name: Restarting sshd
