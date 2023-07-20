@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir -p {/usr/local/src/Aapanel}
+mkdir -p /usr/local/src/Aapanel
 
 apt install wget -y
 
