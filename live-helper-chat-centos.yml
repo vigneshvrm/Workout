@@ -1,6 +1,6 @@
 # Install and configure the Live Helper Chat application on Centos 7.9
  
-- name: Wordpress Setup
+- name: Live Helper Chat Setup
   hosts: localhost
   tasks:
 
