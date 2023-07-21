@@ -30,7 +30,7 @@
 # 4 - Run aaPanel installer with automatic yes response
   - name: Run aaPanel installer with automatic yes response
     expect:
-      command: "sudo bash /tmp/install.sh aapanel"
+      command: "sudo bash /usr/local/src/install-ubuntu_6.0_en.sh"
       responses:
         "Do you want to install aaPanel to the /www directory now?(y/n):": "y"
 
