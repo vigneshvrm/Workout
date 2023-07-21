@@ -2,7 +2,7 @@
 
 mkdir -p /usr/local/src/Aapanel
 
-cat << 'EOF' > /usr/local/src/Aapanel/install_aapanel_exp.sh
+cd /usr/local/src/Aapanel && cat << 'EOF' > install_aapanel_exp.sh
 #!/usr/bin/expect
 
 set timeout -1
