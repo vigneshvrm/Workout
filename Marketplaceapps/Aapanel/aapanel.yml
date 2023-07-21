@@ -45,7 +45,7 @@
       expect "Do you want to install aaPanel to the /www directory now?(y/n):"
       send "y\r"
       expect "Do you need to enable the panel SSl ? (yes/n):"
-      send "n\r"
+      send "yes\r"
       expect eof    
     args:
       executable: /usr/bin/expect
