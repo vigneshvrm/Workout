@@ -28,11 +28,18 @@
 
 
 # 4 - Run aaPanel installer with automatic yes response
-  - name: Run aaPanel installer with automatic yes response
+  # - name: Run aaPanel installer with automatic yes response
+  #   expect:
+  #     command: /usr/local/src/install-ubuntu_6.0_en.sh
+  #     responses:
+  #       "Do you want to install aaPanel to the /www directory now?(y/n):": "y"
+  - name: Run aaPanel installer with automatic "yes" response
     expect:
-      command: "sudo bash /usr/local/src/install-ubuntu_6.0_en.sh"
+      command: sudo bash /usr/local/src/install-ubuntu_6.0_en.sh
       responses:
         "Do you want to install aaPanel to the /www directory now?(y/n):": "y"
+    args:
+      echo: yes 
 
 # 5 - Write a bt default command  output to a file
   - name: Write a bt default command  output to a file
