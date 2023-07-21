@@ -44,7 +44,9 @@
       spawn sudo bash /usr/local/src/install-ubuntu_6.0_en.sh
       expect "Do you want to install aaPanel to the /www directory now?(y/n):"
       send "y\r"
-      expect eof
+      expect "Do you need to enable the panel SSl ? (yes/n):"
+      send "n\r"
+      expect eof    
     args:
       executable: /usr/bin/expect
 
