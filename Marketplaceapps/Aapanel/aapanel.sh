@@ -2,10 +2,6 @@
 
 mkdir -p /usr/local/src/Aapanel
 
-cd /usr/local/src/Aapanel && wget https://github.com/vigneshvrm/Workout/raw/main/Marketplaceapps/Aapanel/Aapanel-cleanup.sh
-
-cd /usr/local/src/Aapanel && wget https://github.com/vigneshvrm/Workout/raw/main/Marketplaceapps/Aapanel/aapanel.yml
-
 cat << 'EOF' > /usr/local/src/Aapanel/install_aapanel_exp.sh
 #!/usr/bin/expect
 
@@ -18,3 +14,7 @@ expect "Do you need to enable the panel SSl ? (yes/n):"
 send "yes\r"
 expect eof
 EOF
+
+cd /usr/local/src/Aapanel && wget https://github.com/vigneshvrm/Workout/raw/main/Marketplaceapps/Aapanel/Aapanel-cleanup.sh
+
+cd /usr/local/src/Aapanel && wget https://github.com/vigneshvrm/Workout/raw/main/Marketplaceapps/Aapanel/aapanel.yml
