@@ -4,9 +4,7 @@ mkdir -p /usr/local/src/Aapanel
 
 cd /usr/local/src/Aapanel && cat << 'EOF' > install_aapanel_exp.sh
 #!/usr/bin/expect
-
 set timeout -1
-
 spawn sudo bash /usr/local/src/install-ubuntu_6.0_en.sh
 expect "Do you want to install aaPanel to the /www directory now?(y/n):"
 send "y\r"
