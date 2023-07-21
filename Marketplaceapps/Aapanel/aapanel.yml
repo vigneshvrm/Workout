@@ -2,10 +2,6 @@
 
 - name: Aapanel Setup
   hosts: localhost
-  vars_prompt:
-    - name: install_directory
-      prompt: "Do you want to install aaPanel to the /www directory now? (y/n)"
-      p: y
   tasks:
 # 1 - Disable ssh access and restart the ssh service
   - name: Restarting sshd
@@ -15,6 +11,16 @@
   - name: Updating Packages
     ansible.builtin.apt:
       update_cache: yes
+
+# 3 - Install requreid Packages
+  - name: Installing Packages
+    ansible.builtin.apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - curl
+      - wget
+      - expect
 
 # # 3 - Install Aapanel and provide the requreid Inputs
 #   - name: Installing Aapanel
@@ -34,12 +40,13 @@
   #     responses:
   #       "Do you want to install aaPanel to the /www directory now?(y/n):": "y"
   - name: Run aaPanel installer with automatic "yes" response
-    expect:
-      command: sudo bash /usr/local/src/install-ubuntu_6.0_en.sh
-      responses:
-        "Do you want to install aaPanel to the /www directory now?(y/n):": "y"
+    shell: |
+      spawn sudo bash /usr/local/src/install-ubuntu_6.0_en.sh
+      expect "Do you want to install aaPanel to the /www directory now?(y/n):"
+      send "y\r"
+      expect eof
     args:
-      echo: yes 
+      executable: /usr/bin/expect
 
 # 5 - Write a bt default command  output to a file
   - name: Write a bt default command  output to a file
