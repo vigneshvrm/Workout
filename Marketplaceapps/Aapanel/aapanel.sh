@@ -6,3 +6,15 @@ cd /usr/local/src/Aapanel && wget https://github.com/vigneshvrm/Workout/raw/main
 
 cd /usr/local/src/Aapanel && wget https://github.com/vigneshvrm/Workout/raw/main/Marketplaceapps/Aapanel/aapanel.yml
 
+cat << 'EOF' > /usr/local/src/Aapanel/install_aapanel_exp.sh
+#!/usr/bin/expect
+
+set timeout -1
+
+spawn sudo bash /usr/local/src/install-ubuntu_6.0_en.sh
+expect "Do you want to install aaPanel to the /www directory now?(y/n):"
+send "y\r"
+expect "Do you need to enable the panel SSl ? (yes/n):"
+send "yes\r"
+expect eof
+EOF

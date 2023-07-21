@@ -4,35 +4,38 @@
   hosts: localhost
   tasks:
 # 1 - Disable ssh access and restart the ssh service
-  - name: Restarting sshd
-    shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
+  # - name: Restarting sshd
+  #   shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
 
 # 2 - Update the system
   - name: Updating Packages
     ansible.builtin.apt:
       update_cache: yes
 
+  - name: Install necessary dependencies
+    package:
+      name: "{{ item }}"
+      state: present
+    loop:
+      - wget
+      - expect  # Install expect package for handling interactions
+    when: ansible_pkg_mgr == 'apt'  # Adjust this condition for your package manager (e.g., yum for CentOS/RHEL)
 
-# # 3 - Install Aapanel and provide the requreid Inputs
-#   - name: Installing Aapanel
-#     shell: "curl -sSO http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && sudo bash install-ubuntu_6.0_en.sh"
-
-# 3 - Download aaPanel installer to /usr/local/src
-  - name: Download aaPanel installer to /usr/local/src
+  - name: Download aaPanel installer
     get_url:
-     url: http://www.aapanel.com/script/install-ubuntu_6.0_en.sh
-     dest: /usr/local/src/install-ubuntu_6.0_en.sh
+      url: http://www.aapanel.com/script/install-ubuntu_6.0_en.sh
+      dest: /usr/local/src/install-ubuntu_6.0_en.sh
+      mode: '0755'
+  - name: Download aaPanel installer
+    get_url:
+      url: http://www.aapanel.com/script/install-ubuntu_6.0_en.sh
+      dest: /usr/local/src/install-ubuntu_6.0_en.sh
+      mode: '0755'
 
+  
+  - name: Run aaPanel installer with expect script
+    shell: expect /usr/local/src/Aapanel/install_aapanel.exp
 
-# 4 - Run aaPanel installer with automatic yes response
-  # - name: Run aaPanel installer with automatic yes response
-  #   expect:
-  #     command: /usr/local/src/install-ubuntu_6.0_en.sh
-  #     responses:
-  #       "Do you want to install aaPanel to the /www directory now?(y/n):": "y"
-  - name: Run aaPanel installer with automatic "yes" response
-    shell: |
-      echo -ne "y\nn\n" | sudo bash /usr/local/src/install-ubuntu_6.0_en.sh
 
 # 5 - Write a bt default command  output to a file
   - name: Write a bt default command  output to a file
@@ -65,3 +68,7 @@
  # 49 - Enable the ssh  acess and restart the sshd service   
   - name: Restarting sshd
     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
+
+
+
+  
