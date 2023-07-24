@@ -56,7 +56,7 @@
       dest: "{{ item.confdest }}"
       remote_src: yes   
     with_items: 
-      - { confsrc: ' /usr/local/src/Aapanel/Aapanel-cleanup.sh', confdest: '/opt/cloudstack/'}  
+      - { confsrc: '/usr/local/src/Aapanel/Aapanel-cleanup.sh', confdest: '/opt/cloudstack/'}  
 
 # 48 - Add the shell script to .bashrc
   - name: Adding a line for shell script
