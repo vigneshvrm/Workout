@@ -62,7 +62,7 @@
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
-      line: "chmod +x /opt/cloudstack/Aapanel-cleanup.sh && /opt/cloudstack/Aapanel-cleanup.sh"
+      line: "chmod +x /opt/Aapanel/Aapanel-cleanup.sh && /opt/Aapanel/Aapanel-cleanup.sh"
       state: present
 
  # 49 - Enable the ssh  acess and restart the sshd service   
