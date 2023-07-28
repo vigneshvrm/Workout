@@ -58,7 +58,7 @@
   - name: Save extracted lines to a file
     copy:
       content: "{{ lines_after_marker }}"
-      dest: "/usr/local/src/password.txt"
+      dest: "/root/.password"
 
 # 11 - Configure elasticsearch
   - name: Configure elasticsearch
