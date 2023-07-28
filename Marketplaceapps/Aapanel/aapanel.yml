@@ -12,6 +12,7 @@
     ansible.builtin.apt:
       update_cache: yes
 
+# 3 - Install necessary dependencies
   - name: Install necessary dependencies
     package:
       name: "{{ item }}"
@@ -21,35 +22,28 @@
       - expect  # Install expect package for handling interactions
     when: ansible_pkg_mgr == 'apt'  # Adjust this condition for your package manager (e.g., yum for CentOS/RHEL)
 
-  - name: Download aaPanel installer
-    get_url:
-      url: http://www.aapanel.com/script/install-ubuntu_6.0_en.sh
-      dest: /usr/local/src/install-ubuntu_6.0_en.sh
-      mode: '0755'
+# 4 - Download aaPanel installer
   - name: Download aaPanel installer
     get_url:
       url: http://www.aapanel.com/script/install-ubuntu_6.0_en.sh
       dest: /usr/local/src/install-ubuntu_6.0_en.sh
       mode: '0755'
 
-  
+# 5 - Run aaPanel installer with expect script
   - name: Run aaPanel installer with expect script
     shell: expect /usr/local/src/Aapanel/install_aapanel.exp
 
-
-# 5 - Write a bt default command  output to a file
+# 6 - Write a bt default command  output to a file
   - name: Write a bt default command  output to a file
     shell: "bt default > /root/.bt"  
 
-
-
-  # 46 - create a cloudstack directory
+# 7 - create a cloudstack directory
   - name: Creating a directory for shell script
     ansible.builtin.file:
       path: /opt/Aapanel
       state: directory         
 
- # 47 - copy the shell script from /opt/ to /opt/cloudstack     
+# 8 - copy the shell script from /opt/ to /opt/cloudstack     
   - name: Copy files for shell script
     copy:
       src: "{{ item.confsrc }}"
@@ -58,14 +52,14 @@
     with_items: 
       - { confsrc: '/usr/local/src/Aapanel/Aapanel-cleanup.sh', confdest: '/opt/Aapanel'}  
 
-# 48 - Add the shell script to .bashrc
+# 9 - Add the shell script to .bashrc
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
       line: "chmod +x /opt/Aapanel/Aapanel-cleanup.sh && /opt/Aapanel/Aapanel-cleanup.sh"
       state: present
 
- # 49 - Enable the ssh  acess and restart the sshd service   
+# 10 - Enable the ssh  acess and restart the sshd service   
   - name: Restarting sshd
     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
 
