@@ -49,28 +49,29 @@
       state: present
     register: install_elasticsearch
 
+# 9 - Extract the password from the output
   - name: Find the marker line number
     set_fact:
-      marker_line_number: "{{ install_elasticsearch_output.stdout | regex_search_index('.*Security autoconfiguration information.*', multiline=true) }}"
+      marker_line_number: "{{ install_elasticsearch.stdout | regex_search('(.*Security autoconfiguration information.*)', multiline=true) | count }}"
 
-  # Use the 'find' filter to extract lines after the marker.
+# 10 - Extract the lines after the marker
   - name: Extract lines after the marker
     set_fact:
-      lines_after_marker: "{{ install_elasticsearch_output.stdout_lines[marker_line_number+1:] | join('\n') }}"
+      lines_after_marker: "{{ install_elasticsearch.stdout | regex_findall('(?s)(Security autoconfiguration information.*)') }}"
+ 
+ # 11 - Extract the password from the output
+  - name: write the output to a file
+    copy:
+      content: "{{ lines_after_marker }}"
+      dest: /root/.password
 
-  # Display the extracted lines after the marker.
-  - name: Show lines after the marker
-    debug:
-      msg: "{{ lines_after_marker }}"
-
-
-# 10 - Save the extracted lines to a file on the Ansible controller.
+# 12 - Save the extracted lines to a file on the Ansible controller.
   - name: Save extracted lines to a file
     copy:
       content: "{{ lines_after_marker }}"
       dest: "/root/.password"
 
-# 11 - Configure elasticsearch
+# 13 - Configure elasticsearch
   - name: Configure elasticsearch
     lineinfile:
       path: /etc/elasticsearch/elasticsearch.yml
@@ -87,7 +88,7 @@
       state: present
       backup: yes
 
-# 10 - Start and enable elasticsearch
+# 14 - Start and enable elasticsearch
   - name: Start and enable elasticsearch
     ansible.builtin.service:
       name: elasticsearch
@@ -98,13 +99,13 @@
 #   - name: Check elasticsearch status
 #     shell: curl -k -u elastic:password https://localhost:9200 "localhost:9200/?pretty"
 
-# 12 - create a cloudstack directory
+# 15 - create a cloudstack directory
   - name: Creating a directory for shell script
     ansible.builtin.file:
       path: /opt/Elasticsearch
       state: directory         
 
-# 8 - copy the shell script from /opt/ to /opt/cloudstack     
+# 16 - copy the shell script from /opt/ to /opt/cloudstack     
   - name: Copy files for shell script
     copy:
       src: "{{ item.confsrc }}"
@@ -113,13 +114,13 @@
     with_items: 
       - { confsrc: '/usr/local/src/elasticsearch/elasticsearch-cleanup.sh', confdest: '/opt/Elasticsearch'}  
 
-# 9 - Add the shell script to .bashrc
+# 17 - Add the shell script to .bashrc
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
       line: "chmod +x /opt/Elasticsearch/elasticsearch-cleanup.sh && /opt/Elasticsearch/elasticsearch-cleanup.sh"
       state: present
 
-# # 10 - Enable the ssh  acess and restart the sshd service   
+# # 18 - Enable the ssh  acess and restart the sshd service   
 #   - name: Restarting sshd
 #     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
