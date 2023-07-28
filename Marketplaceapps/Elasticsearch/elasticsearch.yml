@@ -47,31 +47,8 @@
     apt:
       name: elasticsearch
       state: present
-    register: install_elasticsearch
 
-# 9 - Extract the password from the output
-  - name: Find the marker line number
-    set_fact:
-      marker_line_number: "{{ install_elasticsearch.stdout | regex_search('(.*Security autoconfiguration information.*)', multiline=true) | count }}"
-
-# 10 - Extract the lines after the marker
-  - name: Extract lines after the marker
-    set_fact:
-      lines_after_marker: "{{ install_elasticsearch.stdout | regex_findall('(?s)(Security autoconfiguration information.*)') }}"
- 
- # 11 - Extract the password from the output
-  - name: write the output to a file
-    copy:
-      content: "{{ lines_after_marker }}"
-      dest: /root/.password
-
-# 12 - Save the extracted lines to a file on the Ansible controller.
-  - name: Save extracted lines to a file
-    copy:
-      content: "{{ lines_after_marker }}"
-      dest: "/root/.password"
-
-# 13 - Configure elasticsearch
+# 9 - Configure elasticsearch
   - name: Configure elasticsearch
     lineinfile:
       path: /etc/elasticsearch/elasticsearch.yml
@@ -88,24 +65,24 @@
       state: present
       backup: yes
 
-# 14 - Start and enable elasticsearch
+# 10 - Start and enable elasticsearch
   - name: Start and enable elasticsearch
     ansible.builtin.service:
       name: elasticsearch
       state: started
       enabled: yes
 
-# # 11 - Check elasticsearch status
-#   - name: Check elasticsearch status
-#     shell: curl -k -u elastic:password https://localhost:9200 "localhost:9200/?pretty"
+# 11 - Reset the user elastic password and store it in a file
+  - name: Reset the user elastic password and store it in a file
+    shell: echo "y" | /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -f 2>/dev/null | awk '/^New value:/{print $NF}' > /root/.password
 
-# 15 - create a cloudstack directory
+# 12 - create a cloudstack directory
   - name: Creating a directory for shell script
     ansible.builtin.file:
       path: /opt/Elasticsearch
       state: directory         
 
-# 16 - copy the shell script from /opt/ to /opt/cloudstack     
+# 13 - copy the shell script from /opt/ to /opt/cloudstack     
   - name: Copy files for shell script
     copy:
       src: "{{ item.confsrc }}"
@@ -114,13 +91,13 @@
     with_items: 
       - { confsrc: '/usr/local/src/elasticsearch/elasticsearch-cleanup.sh', confdest: '/opt/Elasticsearch'}  
 
-# 17 - Add the shell script to .bashrc
+# 14 - Add the shell script to .bashrc
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
       line: "chmod +x /opt/Elasticsearch/elasticsearch-cleanup.sh && /opt/Elasticsearch/elasticsearch-cleanup.sh"
       state: present
 
-# # 18 - Enable the ssh  acess and restart the sshd service   
+# # 15 - Enable the ssh  acess and restart the sshd service   
 #   - name: Restarting sshd
 #     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
