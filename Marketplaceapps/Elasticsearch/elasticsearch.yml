@@ -47,7 +47,7 @@
     apt:
       name: elasticsearch
       state: present
-      register: install_elasticsearch
+    register: install_elasticsearch
 
 # 9 - Use the regex_search filter to find the starting point and extract the lines.
   - name: Extract lines after the marker
