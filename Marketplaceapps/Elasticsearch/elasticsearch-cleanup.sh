@@ -16,6 +16,13 @@ echo
 echo
 echo "The elastic user password is $(cat /root/.password)"
 echo
+echo
+echo -e "${RED}You can the elastic search using the command below ${NC}"
+echo
+echo
+echo -e "${RED}curl -u elastic:$(cat /root/.password) -k https://localhost:9200${NC}"
+
+
 
 #Cleanup script
 rm -rf /usr/local/src/
