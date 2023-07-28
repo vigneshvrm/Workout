@@ -14,7 +14,7 @@ echo
 echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
-cat /root/.password
+echo "The elastic user password is $(cat /root/.password)"
 echo
 
 #Cleanup script
