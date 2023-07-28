@@ -47,24 +47,20 @@
     apt:
       name: elasticsearch
       state: present
+      register: install_elasticsearch
 
-# 9 - Configure elasticsearch
-  - name: Configure elasticsearch
-    lineinfile:
-      path: /etc/elasticsearch/elasticsearch.yml
-      regexp: '^#cluster.name'
-      line: 'cluster.name: "elasticsearch"'
-      state: present
-      backup: yes
+# 9 - Use the regex_search filter to find the starting point and extract the lines.
+  - name: Extract lines after the marker
+    set_fact:
+      lines_after_marker: "{{ install_elasticsearch.stdout | regex_search('(.*Security autoconfiguration information.*)', '\\1', multiline=true) }}"
 
-  - name: Configure elasticsearch
-    lineinfile:
-      path: /etc/elasticsearch/elasticsearch.yml
-      regexp: '^#node.name'
-      line: 'node.name: "node-1"'
-      state: present
-      backup: yes
+# 10 - Save the extracted lines to a file on the Ansible controller.
+  - name: Save extracted lines to a file
+    copy:
+      content: "{{ lines_after_marker }}"
+      dest: "/usr/local/src/password.txt"
 
+# 11 - Configure elasticsearch
   - name: Configure elasticsearch
     lineinfile:
       path: /etc/elasticsearch/elasticsearch.yml
@@ -81,7 +77,6 @@
       state: present
       backup: yes
 
-  
 # 10 - Start and enable elasticsearch
   - name: Start and enable elasticsearch
     ansible.builtin.service:
@@ -89,9 +84,9 @@
       state: started
       enabled: yes
 
-# 11 - Check elasticsearch status
-  - name: Check elasticsearch status
-    shell: curl -X GET "localhost:9200/?pretty"
+# # 11 - Check elasticsearch status
+#   - name: Check elasticsearch status
+#     shell: curl -k -u elastic:password https://localhost:9200 "localhost:9200/?pretty"
 
 # 12 - create a cloudstack directory
   - name: Creating a directory for shell script
