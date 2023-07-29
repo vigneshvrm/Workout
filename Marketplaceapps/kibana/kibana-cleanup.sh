@@ -14,7 +14,7 @@ echo
 echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
-echo "The elastic user password is $(cat /root/.password)"
+echo "${RED}The elasticsearch super user password is $(cat /root/.password)"
 echo
 echo
 echo -e "${RED}You can the elastic search using the command below ${NC}"
