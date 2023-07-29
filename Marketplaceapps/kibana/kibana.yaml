@@ -1,6 +1,7 @@
-# Install and Configure Elasticsearch 8.X on Ubuntu 20.04
-# https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb
-# https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html
+# Instal and configure the Kibana app
+# https://medium.com/@tunacici7/how-to-install-elasticsearch-7-16-on-ubuntu-20-04-cdbe8a643e05
+# https://medium.com/@tunacici7/how-to-install-kibana-on-ubuntu-b86230278323
+
 
 - name: Elasticsearch Setup
   hosts: localhost
@@ -16,6 +17,8 @@
       update_cache: yes
       cache_valid_time: 3600
 
+# Install and configure the Elasticsearch app
+
 # 3 - Install Java
   - name: Install Java
     apt:
@@ -25,7 +28,6 @@
 # 4 - Download and install the public signing key 
   - name: Download and install the public signing key 
     shell: wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
-
 
 # 5 - Install apt-transport-https
   - name: Install apt-transport-https
@@ -76,28 +78,22 @@
   - name: Reset the user elastic password and store it in a file
     shell: echo "y" | /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -f 2>/dev/null | awk '/^New value:/{print $NF}' > /root/.password
 
-# 12 - create a cloudstack directory
-  - name: Creating a directory for shell script
-    ansible.builtin.file:
-      path: /opt/Elasticsearch
-      state: directory         
+# 12 - Generate the token for the kibana and store in a file
+  - name: Generate the token for the kibana and store in a file
+    shell: /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana > /root/.kibana
 
-# 13 - copy the shell script from /opt/ to /opt/cloudstack     
-  - name: Copy files for shell script
-    copy:
-      src: "{{ item.confsrc }}"
-      dest: "{{ item.confdest }}"
-      remote_src: yes   
-    with_items: 
-      - { confsrc: '/usr/local/src/elasticsearch/elasticsearch-cleanup.sh', confdest: '/opt/Elasticsearch'}  
+# Install and configure the Kibana app
 
-# 14 - Add the shell script to .bashrc
-  - name: Adding a line for shell script
-    lineinfile:
-      path: /root/.bashrc
-      line: "chmod +x /opt/Elasticsearch/elasticsearch-cleanup.sh && /opt/Elasticsearch/elasticsearch-cleanup.sh"
+# 12 - Install Kibana
+  - name: Install Kibana
+    apt:
+      name: kibana
       state: present
 
-# 15 - Enable the ssh  acess and restart the sshd service   
-  - name: Restarting sshd
-    shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
+# 13 - start and enable kibana
+  - name: start and enable kibana
+    ansible.builtin.service:
+      name: kibana
+      state: started
+      enabled: yes
+

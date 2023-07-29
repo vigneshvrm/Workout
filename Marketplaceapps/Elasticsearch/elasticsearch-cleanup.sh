@@ -21,6 +21,9 @@ echo -e "${RED}You can the elastic search using the command below ${NC}"
 echo
 echo
 echo -e "${RED}curl -u elastic:$(cat /root/.password) -k https://localhost:9200${NC}"
+echo
+echo
+echo -e "${RED}Allow the Port 9200 in the security group to access the Elastic Search${NC}"
 
 
 
