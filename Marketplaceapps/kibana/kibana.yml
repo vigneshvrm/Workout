@@ -84,16 +84,41 @@
 
 # Install and configure the Kibana app
 
-# 12 - Install Kibana
+# 13 - Install Kibana
   - name: Install Kibana
     apt:
       name: kibana
       state: present
 
-# 13 - start and enable kibana
+# 14 - start and enable kibana
   - name: start and enable kibana
     ansible.builtin.service:
       name: kibana
       state: started
       enabled: yes
 
+# 12 - create a cloudstack directory
+  - name: Creating a directory for shell script
+    ansible.builtin.file:
+      path: /opt/kibana
+      state: directory         
+
+# 13 - copy the shell script from /opt/ to /opt/cloudstack     
+  - name: Copy files for shell script
+    copy:
+      src: "{{ item.confsrc }}"
+      dest: "{{ item.confdest }}"
+      remote_src: yes   
+    with_items: 
+      - { confsrc: '/usr/local/src/kibana/kibana-cleanup.sh', confdest: '/opt/kibana'}  
+
+# 14 - Add the shell script to .bashrc
+  - name: Adding a line for shell script
+    lineinfile:
+      path: /root/.bashrc
+      line: "chmod +x /opt/kibana/kibana-cleanup.sh && /opt/kibana/kibana-cleanup.sh"
+      state: present
+
+# 15 - Enable the ssh  acess and restart the sshd service   
+  - name: Restarting sshd
+    shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
