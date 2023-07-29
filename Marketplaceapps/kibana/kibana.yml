@@ -90,20 +90,38 @@
       name: kibana
       state: present
 
-# 14 - start and enable kibana
+# 14 - Configure Kibana
+  - name: Configure Kibana
+    lineinfile:
+      path: /etc/kibana/kibana.yml
+      regexp: '^#server.host'
+      line: 'server.host: "0.0.0.0"'
+      state: present
+      backup: yes
+
+# 15 - Allow the port  5601 in kibana configure file
+  - name: Configure Kibana
+    lineinfile:
+      path: /etc/kibana/kibana.yml
+      regexp: '^#server.port'
+      line: 'server.port: 5601'
+      state: present
+      backup: yes
+
+# 16 - start and enable kibana
   - name: start and enable kibana
     ansible.builtin.service:
       name: kibana
       state: started
       enabled: yes
 
-# 12 - create a cloudstack directory
+# 17 - create a cloudstack directory
   - name: Creating a directory for shell script
     ansible.builtin.file:
       path: /opt/kibana
       state: directory         
 
-# 13 - copy the shell script from /opt/ to /opt/cloudstack     
+# 18 - copy the shell script from /opt/ to /opt/cloudstack     
   - name: Copy files for shell script
     copy:
       src: "{{ item.confsrc }}"
@@ -112,13 +130,13 @@
     with_items: 
       - { confsrc: '/usr/local/src/kibana/kibana-cleanup.sh', confdest: '/opt/kibana'}  
 
-# 14 - Add the shell script to .bashrc
+# 19 - Add the shell script to .bashrc
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
       line: "chmod +x /opt/kibana/kibana-cleanup.sh && /opt/kibana/kibana-cleanup.sh"
       state: present
 
-# 15 - Enable the ssh  acess and restart the sshd service   
+# 20 - Enable the ssh  acess and restart the sshd service   
   - name: Restarting sshd
     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
