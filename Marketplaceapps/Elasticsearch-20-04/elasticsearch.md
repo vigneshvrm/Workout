@@ -15,6 +15,10 @@ Elasticsearch is an open-source search and analytics engine based on Apache Luce
 Java - 11
 Elasticsearch - 8.X
 
+## Allow the Following port in security Groups
+
+Allow the Port 9200  in the security Groups The Port used for all API calls over HTTP. This includes search and aggregations, monitoring and anything else that uses a HTTP request. All client libraries will use this port to talk to Elasticsearch
+
 ### Aloow the ports on the firewall Elasticsearch
 
 One you have deployed the Elasticsearch on your instance kindly allow the port 9200 The elastic search uses this port to listens for HTTP traffic. Currently we have exposed the elastic serach to globally. So kindly the network host expose this node on the network and configure the cluster nodes and the networks in the file.
