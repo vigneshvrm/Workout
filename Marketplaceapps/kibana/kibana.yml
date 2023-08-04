@@ -67,6 +67,43 @@
       state: present
       backup: yes
 
+  - name: configyre elasticsearch
+    lineinfile:
+      path: /etc/elasticsearch/elasticsearch.yml
+      regexp: '^#discovery.seed_hosts'
+      line: 'discovery.seed_hosts: ["localhost", "[::1]"]'
+
+  - name: Configure elasticsearch
+    community.general.elasticsearch_config:
+      hosts:
+        - "{{ inventory_hostname }}"
+      validate_certs: false
+      state: present
+
+  - name: Configure elasticsearch
+    lineinfile:
+      path: /etc/elasticsearch/elasticsearch.yml
+      regexp: '^#cluster.initial_master_nodes'
+      line: 'cluster.initial_master_nodes: ["{{ inventory_hostname }}"]'
+      state: present
+      backup: yes
+
+  - name: Configure elasticsearch
+    lineinfile:
+      path: /etc/elasticsearch/elasticsearch.yml
+      regexp: '^#node.name'
+      line: 'node.name: "{{ inventory_hostname }}"'
+      state: present
+      backup: yes
+
+  - name: Configure Elasticsearch
+    lineinfile:
+      path: /etc/elasticsearch/elasticsearch.yml
+      regexp: '^#discovery.type'
+      line: 'discovery.type: single-node'
+      state: present
+      backup: yes
+
 # 10 - Start and enable elasticsearch
   - name: Start and enable elasticsearch
     ansible.builtin.service:
