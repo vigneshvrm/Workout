@@ -114,13 +114,13 @@
       state: started
       enabled: yes
 
-# 18 - Reset the user elastic password and store it in a file
-  - name: Reset the user elastic password and store it in a file
-    shell: echo "y" | /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -f 2>/dev/null | awk '/^New value:/{print $NF}' > /root/.password
+# # 18 - Reset the user elastic password and store it in a file
+#   - name: Reset the user elastic password and store it in a file
+#     shell: echo "y" | /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -f 2>/dev/null | awk '/^New value:/{print $NF}' > /root/.password
 
-# 19 - Generate the token for the kibana and store in a file
-  - name: Generate the token for the kibana and store in a file
-    shell: /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana > /root/.kibana
+# # 19 - Generate the token for the kibana and store in a file
+#   - name: Generate the token for the kibana and store in a file
+#     shell: /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana > /root/.kibana
 
 # Install and configure the Kibana app
 
