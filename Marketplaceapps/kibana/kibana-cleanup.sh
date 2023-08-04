@@ -14,7 +14,7 @@ echo
 echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
-echo "${RED}The elasticsearch super user password is $(cat /root/.password)"
+echo -e "${RED}The elasticsearch super user password is $(cat /root/.password)"
 echo
 echo
 echo -e "${RED}You can the elastic search using the command below ${NC}"
@@ -26,7 +26,35 @@ echo
 echo -e "${RED}The Kibana Token is $(cat /root/.kibana)"
 echo
 echo
+echo -e "${RED}The Kibanaadmin Password is $(cat /root/.kibanapassword)"
+echo
+echo
 echo -e "${RED} Allow the ports 5601 and 9200 in the security group to access the Kibana UI and Elastic Search${NC}"
+
+#To replace the Domain Name in the apache configuration 
+a=0
+while [ $a -eq 0 ]
+do
+ echo -e "${RED}To cancel setup, press Ctrl+C.  This script will run again on your next login:${NC}"
+ echo -e "${RED}Enter the domain name for your new Kibana site:${NC}"
+ echo -e "${RED}(ex. example.org or test.example.org) do not include www or http/s:${NC}"
+ read -p "Domain/Subdomain name: " dom
+ if [ -z "$dom" ]
+ then
+  a=0
+  echo -e "${RED}Please provide a valid domain or subdomain name to continue to press Ctrl+C to cancel${NC}"
+ else
+  a=1
+fi
+done
+
+sed -i "s/\$domain/$dom/g"  /etc/nginx/sites-available/Kibana
+
+nginx -s reload >/dev/null 2>&1
+
+echo
+echo
+echo -en "${RED}Please take sometime to complete the Kibana Setup.${NC}"
 
 #Cleanup script
 rm -rf /usr/local/src/
