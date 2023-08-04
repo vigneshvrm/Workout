@@ -77,13 +77,13 @@
       regexp: '^#discovery.seed_hosts'
       line: 'discovery.seed_hosts: ["localhost", "[::1]"]'
 
-  - name: Configure elasticsearch
-    lineinfile:
-      path: /etc/elasticsearch/elasticsearch.yml
-      regexp: '^#node.name'
-      line: 'node.name: "{{ inventory_hostname }}"'
-      state: present
-      backup: yes
+  # - name: Configure elasticsearch
+  #   lineinfile:
+  #     path: /etc/elasticsearch/elasticsearch.yml
+  #     regexp: '^#node.name'
+  #     line: 'node.name: "{{ inventory_hostname }}"'
+  #     state: present
+  #     backup: yes
 
 
 # 10 - Start and enable elasticsearch
