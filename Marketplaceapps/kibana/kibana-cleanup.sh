@@ -26,7 +26,7 @@ echo
 # echo -e "${RED}The Kibana Token is $(cat /root/.kibana)"
 # echo
 # echo
-echo -e "${RED}The Kibanaadmin Password is $(cat /root/.kibanapassword)"
+echo -e "${RED}The Kibanaadmin Password is $(cat /root/.kibanaadmin)"
 echo
 echo
 echo -e "${RED} Allow the ports 5601 and 9200 in the security group to access the Kibana UI and Elastic Search${NC}"
@@ -48,7 +48,7 @@ do
 fi
 done
 
-sed -i "s/\$domain/$dom/g"  /etc/nginx/sites-available/Kibana
+sed -i "s/\$domain/$dom/g"  /etc/nginx/sites-enabled/kibana
 
 nginx -s reload >/dev/null 2>&1
 
