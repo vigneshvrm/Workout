@@ -62,7 +62,7 @@
       dest: "{{ item.confdest }}"
       remote_src: yes   
     with_items: 
-      - { confsrc: '/usr/local/src/kibana/Kibana', confdest: '/etc/nginx/sites-available/'}
+      - { confsrc: '/usr/local/src/kibana/kibana', confdest: '/etc/nginx/sites-available/'}
 
 # 11 - Create a symbolic link for kibana
   - name: Create a symbolic link for kibana
