@@ -67,8 +67,8 @@
 # 11 - Create a symbolic link for kibana
   - name: Create a symbolic link for kibana
     ansible.builtin.file:
-      src: /etc/nginx/sites-available/Kibana
-      dest: /etc/nginx/sites-enabled/Kibana
+      src: /etc/nginx/sites-available/kibana
+      dest: /etc/nginx/sites-enabled/kibana
       state: link
 
 # 12 - Remove the default file from sites-enabled
