@@ -17,6 +17,10 @@
       update_cache: yes
       cache_valid_time: 3600
 
+# 2.1 - Install ansible-galaxy collection install community.general
+  - name: Install ansible-galaxy collection install community.general
+    shell: ansible-galaxy collection install community.general
+
 # Install and configure the Elasticsearch app
 
 # 3 - Install Java
