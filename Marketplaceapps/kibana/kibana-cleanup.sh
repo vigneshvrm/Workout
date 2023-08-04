@@ -52,6 +52,23 @@ sed -i "s/\$domain/$dom/g"  /etc/nginx/sites-enabled/kibana
 
 nginx -s reload >/dev/null 2>&1
 
+# Ask the user if they need SSL for the domain
+read -p "Do you want to install SSL for the domain? (yes/no): " install_ssl
+
+if [[ "$install_ssl" =~ ^[Yy]$ ]]; then
+  # Install Certbot if not already installed
+  if ! command -v certbot >/dev/null 2>&1; then
+    sudo apt-get update
+    sudo apt-get install -y certbot python3-certbot-nginx
+  fi
+
+  # Obtain SSL certificate with Certbot
+  sudo certbot --nginx -d "$dom"
+else
+  echo "SSL installation is skipped. You can install it later using Certbot."
+fi
+
+
 echo
 echo
 echo -en "${RED}Please take sometime to complete the Kibana Setup.${NC}"
