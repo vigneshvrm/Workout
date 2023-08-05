@@ -14,18 +14,12 @@ echo
 echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
-# echo -e "${RED}The elasticsearch super user password is $(cat /root/.password)"
-# echo
-# echo
 echo -e "${RED}You can the elastic search using the command below ${NC}"
 echo
 echo
 echo -e "${RED}curl -X GET "localhost:9200"${NC}"
 echo
 echo
-# echo -e "${RED}The Kibana Token is $(cat /root/.kibana)"
-# echo
-# echo
 echo -e "${RED}The Kibanaadmin Password is $(cat /root/.kibanaadmin)"
 echo
 echo

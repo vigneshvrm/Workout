@@ -99,14 +99,6 @@
       state: present
       backup: yes
 
-  # - name: Configure elasticsearch
-  #   lineinfile:
-  #     path: /etc/elasticsearch/elasticsearch.yml
-  #     regexp: '^#http.port'
-  #     line: 'http.port: 9200'
-  #     state: present
-  #     backup: yes
-
 # 17 - Start and enable elasticsearch
   - name: Start and enable elasticsearch
     ansible.builtin.service:
@@ -114,23 +106,15 @@
       state: started
       enabled: yes
 
-# # 18 - Reset the user elastic password and store it in a file
-#   - name: Reset the user elastic password and store it in a file
-#     shell: echo "y" | /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -f 2>/dev/null | awk '/^New value:/{print $NF}' > /root/.password
-
-# # 19 - Generate the token for the kibana and store in a file
-#   - name: Generate the token for the kibana and store in a file
-#     shell: /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana > /root/.kibana
-
 # Install and configure the Kibana app
 
-# 20 - Install Kibana
+# 18 - Install Kibana
   - name: Install Kibana
     apt:
       name: kibana
       state: present
 
-# 21 - Configure Kibana
+# 19 - Configure Kibana
   - name: Configure Kibana
     lineinfile:
       path: /etc/kibana/kibana.yml
@@ -139,7 +123,7 @@
       state: present
       backup: yes
 
-# 22 - Allow the port  5601 in kibana configure file
+# 20 - Allow the port  5601 in kibana configure file
   - name: Configure Kibana
     lineinfile:
       path: /etc/kibana/kibana.yml
@@ -148,7 +132,7 @@
       state: present
       backup: yes
 
-# 23 - start and enable kibana
+# 21 - start and enable kibana
   - name: start and enable kibana
     ansible.builtin.service:
       name: kibana
@@ -157,17 +141,17 @@
 
 # Install and configure the Logstash app
 
-# 24 - Install Logstash
+# 22 - Install Logstash
   - name: Install Logstash
     apt:
       name: logstash
       state: present
 
-# 25 - Create a configuration file called 02-beats-input.conf
+# 23 - Create a configuration file called 02-beats-input.conf
   - name: Create a configuration file called 02-beats-input.conf
     shell: echo "input { beats { port => 5044 } }" > /etc/logstash/conf.d/02-beats-input.conf
 
-# 26 - Copy the 30-elasticsearch-output.conf from /usr/loal/src/kibana to  /etc/logstash/conf.d/
+# 24 - Copy the 30-elasticsearch-output.conf from /usr/loal/src/kibana to  /etc/logstash/conf.d/
   - name: Copy the 30-elasticsearch-output.conf from /usr/loal/src to  /etc/logstash/conf.d/
     copy:
       src: "{{ item.confsrc }}"
@@ -176,20 +160,20 @@
     with_items: 
       - { confsrc: '/usr/local/src/kibana/30-elasticsearch-output.conf', confdest: '/etc/logstash/conf.d/'}
 
-# 27 - start and enable logstash
+# 25 - start and enable logstash
   - name: start and enable logstash
     ansible.builtin.service:
       name: logstash
       state: started
       enabled: yes
 
-# 28 - create a cloudstack directory
+# 26 - create a cloudstack directory
   - name: Creating a directory for shell script
     ansible.builtin.file:
       path: /opt/kibana
       state: directory         
 
-# 29 - copy the shell script from /opt/ to /opt/cloudstack     
+# 27 - copy the shell script from /opt/ to /opt/cloudstack     
   - name: Copy files for shell script
     copy:
       src: "{{ item.confsrc }}"
@@ -198,13 +182,13 @@
     with_items: 
       - { confsrc: '/usr/local/src/kibana/kibana-cleanup.sh', confdest: '/opt/kibana'}  
 
-# 30 - Add the shell script to .bashrc
+# 28 - Add the shell script to .bashrc
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
       line: "chmod +x /opt/kibana/kibana-cleanup.sh && /opt/kibana/kibana-cleanup.sh"
       state: present
 
-# 31 - Enable the ssh  acess and restart the sshd service   
+# 29 - Enable the ssh  acess and restart the sshd service   
   - name: Restarting sshd
     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"

@@ -37,13 +37,7 @@ Kindly make the required changes in the elasticsearch using the below command
 nano /etc/elasticsearch/elasticsearch.yml
 ~~~
 
-Access Kibana Web Interface through the web using http://IPADDRESS:5601.
-
-Once you have entered the kibana token kindly use the below command to generate the kibana verfication code to complete the setup process
-
-~~~
-/usr/share/kibana/bin/kibana-verification-code
-~~~
+Access Kibana Web Interface through the web using http://domain.
 
 To collect data from numerous sources and deliver it to Logstash or Elasticsearch, the Elastic Stack employs many lightweight data shippers known as Beats. Here are the Elastic Beats that are currently available. Kindly install and configure based on your requriment.
 
