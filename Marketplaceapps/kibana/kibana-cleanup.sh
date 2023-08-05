@@ -50,12 +50,6 @@ nginx -s reload >/dev/null 2>&1
 read -p "Do you want to install SSL for the domain? (yes/no): " install_ssl
 
 if [[ "$install_ssl" =~ ^[Yy]$ ]]; then
-  # Install Certbot if not already installed
-  if ! command -v certbot >/dev/null 2>&1; then
-    sudo apt-get update
-    sudo apt-get install -y certbot python3-certbot-nginx
-  fi
-
   # Obtain SSL certificate with Certbot
   sudo certbot --nginx -d "$dom"
 else

@@ -30,6 +30,8 @@
       name: 
         - apt-transport-https
         - nginx
+        - certbot
+        - python3-certbot-nginx
       state: present
 
 # 6 - Save the repository definition to /etc/apt/sources.list.d/elastic-8.x.list
