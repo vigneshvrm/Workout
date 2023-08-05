@@ -42,7 +42,7 @@ do
 fi
 done
 
-sed -i "s/\$domain/$dom/g"  /etc/nginx/sites-enabled/kibana
+sed -i "s/domain/$dom/g"  /etc/nginx/sites-enabled/kibana
 
 nginx -s reload >/dev/null 2>&1
 
