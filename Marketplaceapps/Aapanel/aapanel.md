@@ -18,6 +18,11 @@ Aapanel - Latest
 
 You can allow the ports following  ports **7800|888|80|443|20|21** in the firewall to access the web-panel.
 
+### Getting started after deploying Aapanel
+
+You can log into the instance as root using either the password you set when you created the instance or with an SSH key if you added one during creation.
+
+
 ## Getting the default credentails for Aapanel
 
 You run the below command to get your default login credentails of your Aapanel
@@ -26,8 +31,10 @@ You run the below command to get your default login credentails of your Aapanel
 bt default
 ~~~
 
-### Getting started after deploying Aapanel
+Kindly reset the default templeate password using the below command.
 
-You can log into the instance as root using either the password you set when you created the instance or with an SSH key if you added one during creation.
+~~~
+bt 5
+~~~
 
 You can then set up the Aapanel through the Web interface based upon your requriment.
