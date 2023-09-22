@@ -124,6 +124,13 @@
     shell: systemctl daemon-reload
 
 
+# 7 - create a cloudstack directory
+  - name: Creating a directory for shell script
+    ansible.builtin.file:
+      path: /opt/JitsiMeet
+      state: directory  
+
+
 # 8 - copy the shell script from /opt/ to /opt/cloudstack     
   - name: Copy files for shell script
     copy:
