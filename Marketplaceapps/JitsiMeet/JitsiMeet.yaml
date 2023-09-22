@@ -127,7 +127,7 @@
 # 7 - create a cloudstack directory
   - name: Creating a directory for shell script
     ansible.builtin.file:
-      path: /opt/JitsiMeet
+      path: /opt/JitsiMeet                                                                                                                                              
       state: directory  
 
 
