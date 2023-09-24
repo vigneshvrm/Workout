@@ -37,20 +37,14 @@ sudo sed -i -e "/127\.0\.0\.1/s/^/# /" -e "/127\.0\.1\.1/s/^/# /" /etc/hosts
 echo "127.0.0.1 $dom" | sudo tee -a /etc/hosts
 echo "127.0.1.1 $dom" | sudo tee -a /etc/hosts
 
-echo "jitsi-videobridge jitsi-videobridge/jvb-hostname $dom" | debconf-set-selections
-echo "jitsi-meet-web-config jitsi-meet/cert-choice select 'Generate a new self-signed certificate (You will later get a chance to obtain a Let's encrypt certificate)'" | debconf-set-selections
+dpkg-reconfigure jitsi-videobridge2
+dpkg-reconfigure jitsi-meet-web         
+dpkg-reconfigure jitsi-meet-web-config  
+dpkg-reconfigure jitsi-meet             
+dpkg-reconfigure jitsi-meet-prosody     
+dpkg-reconfigure jitsi-meet-turnserver  
 
-apt install jitsi-meet -y
-
-certbot --nginx --non-interactive --redirect  -d $dom
-
-
-private=$(hostname -I)
-public=$(curl https://api.ipify.org)
-
-echo "org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS=$private" >> /etc/jitsi/videobridge/sip-communicator.properties
-echo "org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=$public" >> /etc/jitsi/videobridge/sip-communicator.properties
-
+ certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --register-unsafely-without-email
 
 #Cleanup script
 rm -rf /usr/local/src/

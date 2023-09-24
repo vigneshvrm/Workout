@@ -78,39 +78,39 @@
     ansible.builtin.apt:
       update_cache: yes
 
-# # 11 - debconf-set-selections for domain name: meet.domain.com
-#   - name :  debconf-set-selections for domain name
-#     shell: echo "jitsi-videobridge jitsi-videobridge/jvb-hostname string meet.domain.com" | debconf-set-selections
+# 11 - debconf-set-selections for domain name: meet.domain.com
+  - name :  debconf-set-selections for domain name
+    shell: echo "jitsi-videobridge jitsi-videobridge/jvb-hostname string meet.domain.com" | debconf-set-selections
 
 
-# # 12 - debconf-set-selections for domain self-signed certificate
-#   - name :  debconf-set-selections for domain self-signed certificate
-#     shell: echo "jitsi-meet-web-config jitsi-meet/cert-choice select 'Generate a new self-signed certificate (You will later get a chance to obtain a Let's encrypt certificate)'" | debconf-set-selections
+# 12 - debconf-set-selections for domain self-signed certificate
+  - name :  debconf-set-selections for domain self-signed certificate
+    shell: echo "jitsi-meet-web-config jitsi-meet/cert-choice select 'Generate a new self-signed certificate (You will later get a chance to obtain a Let's encrypt certificate)'" | debconf-set-selections
 
-# # 13 - Install Jitsi Meet
-#   - name: Install Jitsi Meet
-#     ansible.builtin.apt:
-#       name: "{{ packages }}"
-#       state: present
-#     vars:
-#       packages:
-#         - jitsi-meet
+# 13 - Install Jitsi Meet
+  - name: Install Jitsi Meet
+    ansible.builtin.apt:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+        - jitsi-meet
 
-# # 14 - Get the public IP address
-#   - name: Get the public IP address
-#     shell: curl https://api.ipify.org
-#     register: public_ip
+# 14 - Get the public IP address
+  - name: Get the public IP address
+    shell: curl https://api.ipify.org
+    register: public_ip
 
-# # 16 - Get the Private ip address
-#   - name: Get the Private ip address
-#     shell: hostname -I
-#     register: private_ip
+# 16 - Get the Private ip address
+  - name: Get the Private ip address
+    shell: hostname -I
+    register: private_ip
 
-# # 17 - Set the NAT_HARVESTER_LOCAL_ADDRESS and NAT_HARVESTER_PUBLIC_ADDRESS
-#   - name: Set the NAT_HARVESTER_LOCAL_ADDRESS and NAT_HARVESTER_PUBLIC_ADDRESS
-#     shell: |
-#       echo "org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS={{ private_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
-#       echo "org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS={{ public_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
+# 17 - Set the NAT_HARVESTER_LOCAL_ADDRESS and NAT_HARVESTER_PUBLIC_ADDRESS
+  - name: Set the NAT_HARVESTER_LOCAL_ADDRESS and NAT_HARVESTER_PUBLIC_ADDRESS
+    shell: |
+      echo "org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS={{ private_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
+      echo "org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS={{ public_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
 
 # 18 - Change the default processes and open files on server
   - name: Change the default processes and open files on server
