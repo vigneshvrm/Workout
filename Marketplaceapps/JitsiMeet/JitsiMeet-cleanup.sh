@@ -37,14 +37,18 @@ sudo sed -i -e "/127\.0\.0\.1/s/^/# /" -e "/127\.0\.1\.1/s/^/# /" /etc/hosts
 echo "127.0.0.1 $dom" | sudo tee -a /etc/hosts
 echo "127.0.1.1 $dom" | sudo tee -a /etc/hosts
 
+
 dpkg-reconfigure jitsi-videobridge2
 dpkg-reconfigure jitsi-meet-web         
 dpkg-reconfigure jitsi-meet-web-config  
 dpkg-reconfigure jitsi-meet             
 dpkg-reconfigure jitsi-meet-prosody     
 dpkg-reconfigure jitsi-meet-turnserver  
+sudo sed -i '/server_names_hash_bucket_size/s/^/#/' /etc/nginx/sites-enabled/$dom
 
  certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --register-unsafely-without-email
+
+sudo sed -i '/server_names_hash_bucket_size/s/^#//' /etc/nginx/sites-enabled/$dom
 
 #Cleanup script
 rm -rf /usr/local/src/
