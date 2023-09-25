@@ -30,25 +30,25 @@ do
 fi
 done
 
-hostnamectl set-hostname  $dom
+hostnamectl set-hostname  $dom > /dev/null 2>&1
 
-sudo sed -i -e "/127\.0\.0\.1/s/^/# /" -e "/127\.0\.1\.1/s/^/# /" /etc/hosts
+sudo sed -i -e "/127\.0\.0\.1/s/^/# /" -e "/127\.0\.1\.1/s/^/# /" /etc/hosts > /dev/null 2>&1
 
-echo "127.0.0.1 $dom" | sudo tee -a /etc/hosts
-echo "127.0.1.1 $dom" | sudo tee -a /etc/hosts
+echo "127.0.0.1 $dom" | sudo tee -a /etc/hosts > /dev/null 2>&1
+echo "127.0.1.1 $dom" | sudo tee -a /etc/hosts > /dev/null 2>&1
 
 
 dpkg-reconfigure jitsi-videobridge2
-dpkg-reconfigure jitsi-meet-web         
-dpkg-reconfigure jitsi-meet-web-config  
-dpkg-reconfigure jitsi-meet             
-dpkg-reconfigure jitsi-meet-prosody     
-dpkg-reconfigure jitsi-meet-turnserver  
-sudo sed -i '/server_names_hash_bucket_size/s/^/#/' /etc/nginx/sites-enabled/meet.domain.com.conf
+dpkg-reconfigure jitsi-meet-web         > /dev/null 2>&1
+dpkg-reconfigure jitsi-meet-web-config  > /dev/null 2>&1
+dpkg-reconfigure jitsi-meet             > /dev/null 2>&1
+dpkg-reconfigure jitsi-meet-prosody     > /dev/null 2>&1
+dpkg-reconfigure jitsi-meet-turnserver  > /dev/null 2>&1
+sudo sed -i '/server_names_hash_bucket_size/s/^/#/' /etc/nginx/sites-enabled/$dom.conf > /dev/null 2>&1
 
- certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --register-unsafely-without-email
+ certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --register-unsafely-without-email > /dev/null 2>&1
 
-sudo sed -i '/server_names_hash_bucket_size/s/^#//' /etc/nginx/sites-enabled/$dom.conf
+sudo sed -i '/server_names_hash_bucket_size/s/^#//' /etc/nginx/sites-enabled/$dom.conf > /dev/null 2>&1
 
 #Cleanup script
 rm -rf /usr/local/src/
