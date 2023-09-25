@@ -44,11 +44,11 @@ dpkg-reconfigure jitsi-meet-web-config
 dpkg-reconfigure jitsi-meet             
 dpkg-reconfigure jitsi-meet-prosody     
 dpkg-reconfigure jitsi-meet-turnserver  
-sudo sed -i '/server_names_hash_bucket_size/s/^/#/' /etc/nginx/sites-enabled/$dom
+sudo sed -i '/server_names_hash_bucket_size/s/^/#/' /etc/nginx/sites-enabled/meet.domain.com.conf
 
  certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --register-unsafely-without-email
 
-sudo sed -i '/server_names_hash_bucket_size/s/^#//' /etc/nginx/sites-enabled/$dom
+sudo sed -i '/server_names_hash_bucket_size/s/^#//' /etc/nginx/sites-enabled/$dom.conf
 
 #Cleanup script
 rm -rf /usr/local/src/
