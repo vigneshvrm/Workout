@@ -4,9 +4,9 @@
 - name: Jitsi Setup
   hosts: localhost
   tasks:
-# #1 - Disable ssh access and restart the ssh service
-#   - name: Restarting sshd
-#     shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
+#1 - Disable ssh access and restart the ssh service
+  - name: Restarting sshd
+    shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
 
 
 # 2 - Update the system
@@ -147,6 +147,6 @@
       line: "chmod +x /opt/JitsiMeet/JitsiMeet-cleanup.sh && /opt/JitsiMeet/JitsiMeet-cleanup.sh"
       state: present
 
-# # 10 - Enable the ssh  acess and restart the sshd service   
-#   - name: Restarting sshd
-#     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
+# 10 - Enable the ssh  acess and restart the sshd service   
+  - name: Restarting sshd
+    shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
