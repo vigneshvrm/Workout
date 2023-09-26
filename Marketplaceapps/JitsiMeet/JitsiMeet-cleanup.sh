@@ -20,15 +20,10 @@ while [ $a -eq 0 ]
 do
  echo -e "${RED}Enter the domain name for your new Jitsi Meet site:${NC}"
  echo -e "${RED}(ex. example.org or test.example.org) do not include www or http/s:${NC}"
- read -p "Domain/Subdomain name: " dom
- if [ -z "$dom" ]
- then
-  a=0
-  echo -e "${RED}Please provide a valid domain or subdomain name to continue to press Ctrl+C to cancel${NC}"
- else
-  a=1
-fi
 done
+dpkg-reconfigure jitsi-videobridge2
+
+dom=$(grep -oP 'server_name \K[^;]+' /etc/nginx/sites-enabled/*.conf | head -1)
 
 hostnamectl set-hostname  $dom > /dev/null 2>&1
 
@@ -38,7 +33,6 @@ echo "127.0.0.1 $dom" | sudo tee -a /etc/hosts > /dev/null 2>&1
 echo "127.0.1.1 $dom" | sudo tee -a /etc/hosts > /dev/null 2>&1
 
 
-dpkg-reconfigure jitsi-videobridge2
 dpkg-reconfigure jitsi-meet-web         > /dev/null 2>&1
 dpkg-reconfigure jitsi-meet-web-config  > /dev/null 2>&1
 dpkg-reconfigure jitsi-meet             > /dev/null 2>&1
