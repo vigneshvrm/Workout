@@ -15,12 +15,10 @@ echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
 #To Install The Jistmeet
-a=0
-while [ $a -eq 0 ]
-do
- echo -e "${RED}Enter the domain name for your new Jitsi Meet site:${NC}"
- echo -e "${RED}(ex. example.org or test.example.org) do not include www or http/s:${NC}"
-done
+
+echo -e "${RED}Enter the domain name for your new Jitsi Meet site:${NC}"
+echo -e "${RED}(ex. example.org or test.example.org) do not include www or http/s:${NC}"
+
 dpkg-reconfigure jitsi-videobridge2
 
 dom=$(grep -oP 'server_name \K[^;]+' /etc/nginx/sites-enabled/*.conf | head -1)
