@@ -25,6 +25,7 @@ dpkg-reconfigure jitsi-meet-web-config  > /dev/null 2>&1
 dpkg-reconfigure jitsi-meet             > /dev/null 2>&1
 dpkg-reconfigure jitsi-meet-prosody     > /dev/null 2>&1
 dpkg-reconfigure jitsi-meet-turnserver  > /dev/null 2>&1
+echo -e "${RED}Kindly wait while the Jitsi Meet re-configure based on the domain!${NC}"
 
 dom=$(grep -oP 'server_name \K[^;]+' /etc/nginx/sites-enabled/*.conf | head -1)
 
