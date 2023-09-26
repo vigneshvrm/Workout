@@ -20,6 +20,11 @@ echo -e "${RED}Enter the domain name for your new Jitsi Meet site:${NC}"
 echo -e "${RED}(ex. example.org or test.example.org) do not include www or http/s:${NC}"
 
 dpkg-reconfigure jitsi-videobridge2
+dpkg-reconfigure jitsi-meet-web         > /dev/null 2>&1
+dpkg-reconfigure jitsi-meet-web-config  > /dev/null 2>&1
+dpkg-reconfigure jitsi-meet             > /dev/null 2>&1
+dpkg-reconfigure jitsi-meet-prosody     > /dev/null 2>&1
+dpkg-reconfigure jitsi-meet-turnserver  > /dev/null 2>&1
 
 dom=$(grep -oP 'server_name \K[^;]+' /etc/nginx/sites-enabled/*.conf | head -1)
 
@@ -30,12 +35,6 @@ sudo sed -i -e "/127\.0\.0\.1/s/^/# /" -e "/127\.0\.1\.1/s/^/# /" /etc/hosts > /
 echo "127.0.0.1 $dom" | sudo tee -a /etc/hosts > /dev/null 2>&1
 echo "127.0.1.1 $dom" | sudo tee -a /etc/hosts > /dev/null 2>&1
 
-
-dpkg-reconfigure jitsi-meet-web         > /dev/null 2>&1
-dpkg-reconfigure jitsi-meet-web-config  > /dev/null 2>&1
-dpkg-reconfigure jitsi-meet             > /dev/null 2>&1
-dpkg-reconfigure jitsi-meet-prosody     > /dev/null 2>&1
-dpkg-reconfigure jitsi-meet-turnserver  > /dev/null 2>&1
 sudo sed -i '/server_names_hash_bucket_size/s/^/#/' /etc/nginx/sites-enabled/$dom.conf > /dev/null 2>&1
 
  certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --register-unsafely-without-email > /dev/null 2>&1
