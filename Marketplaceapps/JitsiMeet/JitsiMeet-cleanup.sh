@@ -20,8 +20,8 @@ echo -e "${RED}Enter the domain name for your new Jitsi Meet site:${NC}"
 echo -e "${RED}(ex. example.org or test.example.org) do not include www or http/s:${NC}"
 
 dpkg-reconfigure jitsi-videobridge2
-dpkg-reconfigure jitsi-meet-web         > /dev/null 2>&1
-dpkg-reconfigure jitsi-meet-web-config  > /dev/null 2>&1
+# dpkg-reconfigure jitsi-meet-web         > /dev/null 2>&1
+# dpkg-reconfigure jitsi-meet-web-config  > /dev/null 2>&1
 # dpkg-reconfigure jitsi-meet             > /dev/null 2>&1
 # dpkg-reconfigure jitsi-meet-prosody     > /dev/null 2>&1
 # dpkg-reconfigure jitsi-meet-turnserver  > /dev/null 2>&1
