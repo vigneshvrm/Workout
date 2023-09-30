@@ -13,15 +13,15 @@ echo
 echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
-sleep 10
+sleep 5 
 
 #To Install The Jistmeet
 
 
-apt-get -y install jicofo jitsi-meet jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jitsi-meet-web-config > /dev/null 2>&1
+apt-get -y install jicofo jitsi-meet jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jitsi-meet-web-config
 apt-get -y jitsi-videobridge2
 
-bash /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
+# bash /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
 
 systemctl restart prosody
 systemctl restart jicofo
@@ -42,6 +42,11 @@ private_ip=$(hostname -I | awk '{print $1}')
 
 echo "org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS={{ private_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
 echo "org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS={{ public_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
+
+
+
+
+certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --email admin@$dom > /dev/null 2>&1
 
 #Cleanup script
 rm -rf /usr/local/src/
