@@ -43,10 +43,12 @@ private_ip=$(hostname -I | awk '{print $1}')
 echo "org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS= $private_ip" >> /etc/jitsi/videobridge/sip-communicator.properties
 echo "org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS= $public_ip" >> /etc/jitsi/videobridge/sip-communicator.properties
 
-
-
+sed -i '/server_names_hash_bucket_size/s/^/#/' /etc/nginx/sites-enabled/$dom.conf
 
 certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --email admin@$dom 
+
+sed -i '/server_names_hash_bucket_size/s/^#//' /etc/nginx/sites-enabled/$dom.conf
+
 
 #Cleanup script
 rm -rf /usr/local/src/
