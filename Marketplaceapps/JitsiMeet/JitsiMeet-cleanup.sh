@@ -14,19 +14,8 @@ echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
 sleep 5 
-
 #To Install The Jistmeet
-
-
-#apt-get -y install jicofo jitsi-meet jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jitsi-meet-web-config jitsi-videobridge2
- apt-get -y install jitsi-meet
-
-# bash /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
-
-systemctl restart prosody
-systemctl restart jicofo
-systemctl restart jitsi-videobridge2
-systemctl restart jitsi-meet-web
+apt-get -y install jitsi-meet
 
 dom=$(grep -oP 'server_name \K[^;]+' /etc/nginx/sites-enabled/*.conf | head -1)
 
@@ -49,6 +38,10 @@ certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --email admin@
 
 sed -i '/server_names_hash_bucket_size/s/^#//' /etc/nginx/sites-enabled/$dom.conf
 
+systemctl restart prosody
+systemctl restart jicofo
+systemctl restart jitsi-videobridge2
+systemctl restart jitsi-meet-web
 
 #Cleanup script
 rm -rf /usr/local/src/
