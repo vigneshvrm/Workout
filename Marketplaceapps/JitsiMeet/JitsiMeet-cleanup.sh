@@ -16,23 +16,6 @@ echo
 echo
 #To Install The Jistmeet
 
-# echo -e "${RED}Enter the domain name for your new Jitsi Meet site:${NC}"
-# echo -e "${RED}(ex. example.org or test.example.org) do not include www or http/s:${NC}"
-
-# dpkg-reconfigure jitsi-videobridge2
-# dpkg-reconfigure jicofo  > /dev/null 2>&1
-# dpkg-reconfigure jitsi-meet-web         > /dev/null 2>&1
-# dpkg-reconfigure jitsi-meet-web-config  > /dev/null 2>&1
-# dpkg-reconfigure jitsi-meet             > /dev/null 2>&1
-# dpkg-reconfigure jitsi-meet-prosody     > /dev/null 2>&1
-# dpkg-reconfigure jitsi-meet-turnserver  > /dev/null 2>&1
-
-
-# rm -Rf /etc/nginx/sites-enabled/meet.domain.com.conf
-
-
-
-# echo -e "${RED}Kindly wait while the Jitsi Meet re-configure based on the domain!${NC}"
 
 apt-get -y install jicofo jitsi-meet jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jitsi-meet-web-config jitsi-videobridge2
 
@@ -62,11 +45,11 @@ sudo sed -i -e "/127\.0\.0\.1/s/^/# /" -e "/127\.0\.1\.1/s/^/# /" /etc/hosts > /
 echo "127.0.0.1 $dom" | sudo tee -a /etc/hosts > /dev/null 2>&1
 echo "127.0.1.1 $dom" | sudo tee -a /etc/hosts > /dev/null 2>&1
 
-# sudo sed -i '/server_names_hash_bucket_size/s/^/#/' /etc/nginx/sites-enabled/$dom.conf > /dev/null 2>&1
+public_ip=$(curl -s ifconfig.me)
+private_ip=$(hostname -I | awk '{print $1}')
 
-# certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --register-unsafely-without-email > /dev/null 2>&1
-
-# sudo sed -i '/server_names_hash_bucket_size/s/^#//' /etc/nginx/sites-enabled/$dom.conf > /dev/null 2>&1
+echo "org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS={{ private_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
+echo "org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS={{ public_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
 
 #Cleanup script
 rm -rf /usr/local/src/

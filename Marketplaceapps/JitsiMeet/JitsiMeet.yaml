@@ -96,21 +96,21 @@
 #       packages:
 #         - jitsi-meet
 
-# 14 - Get the public IP address
-  - name: Get the public IP address
-    shell: curl https://api.ipify.org
-    register: public_ip
+# # 14 - Get the public IP address
+#   - name: Get the public IP address
+#     shell: curl https://api.ipify.org
+#     register: public_ip
 
-# 16 - Get the Private ip address
-  - name: Get the Private ip address
-    shell: hostname -I
-    register: private_ip
+# # 16 - Get the Private ip address
+#   - name: Get the Private ip address
+#     shell: hostname -I
+#     register: private_ip
 
-# 17 - Set the NAT_HARVESTER_LOCAL_ADDRESS and NAT_HARVESTER_PUBLIC_ADDRESS
-  - name: Set the NAT_HARVESTER_LOCAL_ADDRESS and NAT_HARVESTER_PUBLIC_ADDRESS
-    shell: |
-      echo "org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS={{ private_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
-      echo "org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS={{ public_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
+# # 17 - Set the NAT_HARVESTER_LOCAL_ADDRESS and NAT_HARVESTER_PUBLIC_ADDRESS
+#   - name: Set the NAT_HARVESTER_LOCAL_ADDRESS and NAT_HARVESTER_PUBLIC_ADDRESS
+#     shell: |
+#       echo "org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS={{ private_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
+#       echo "org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS={{ public_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
 
 # 18 - Change the default processes and open files on server
   - name: Change the default processes and open files on server
