@@ -17,7 +17,8 @@ echo
 #To Install The Jistmeet
 
 
-apt-get -y install jicofo jitsi-meet jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jitsi-meet-web-config jitsi-videobridge2
+apt-get -y install jicofo jitsi-meet jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jitsi-meet-web-config > /dev/null 2>&1
+ apt-get -y jitsi-videobridge2
 
 bash /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
 
