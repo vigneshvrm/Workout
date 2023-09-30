@@ -40,13 +40,13 @@ echo "127.0.1.1 $dom" | sudo tee -a /etc/hosts > /dev/null 2>&1
 public_ip=$(curl -s ifconfig.me)
 private_ip=$(hostname -I | awk '{print $1}')
 
-echo "org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS={{ private_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
-echo "org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS={{ public_ip.stdout }}" >> /etc/jitsi/videobridge/sip-communicator.properties
+echo "org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS= $private_ip" >> /etc/jitsi/videobridge/sip-communicator.properties
+echo "org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS= $public_ip" >> /etc/jitsi/videobridge/sip-communicator.properties
 
 
 
 
-certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --email admin@$dom > /dev/null 2>&1
+certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --email admin@$dom 
 
 #Cleanup script
 rm -rf /usr/local/src/
