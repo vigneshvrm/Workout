@@ -5,7 +5,7 @@ NC='\033[0m'
 
 echo -e "${RED}
 ################################################################################################################
-#                              Your MarketPlace App will be deployed Shortly!                            #
+#                              Your MarketPlace App will be deployed Shortly!                                  #
 ################################################################################################################
 ${NC}"
 
@@ -18,8 +18,8 @@ sleep 5
 #To Install The Jistmeet
 
 
-apt-get -y install jicofo jitsi-meet jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jitsi-meet-web-config jitsi-videobridge2
-
+#apt-get -y install jicofo jitsi-meet jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jitsi-meet-web-config jitsi-videobridge2
+ apt-get -y install jitsi-meet
 
 # bash /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
 
