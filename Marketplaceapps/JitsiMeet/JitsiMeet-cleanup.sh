@@ -5,8 +5,7 @@ NC='\033[0m'
 
 echo -e "${RED}
 ################################################################################################################
-#                              Your MarketPlace App has been deployed successfully!                            #
-#                                 Passwords are stored under /root/                                            #
+#                              Your MarketPlace App will be deployed Shortly!                            #
 ################################################################################################################
 ${NC}"
 
@@ -14,23 +13,15 @@ echo
 echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
+sleep 10
+
 #To Install The Jistmeet
 
 
 apt-get -y install jicofo jitsi-meet jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jitsi-meet-web-config > /dev/null 2>&1
- apt-get -y jitsi-videobridge2
+apt-get -y jitsi-videobridge2
 
 bash /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
-
-# update prosody to use internal user management
-for f in /etc/prosody/conf.avail/*.cfg.lua; do
-    # ignore default prosody configuration files
-        if [[ "$f" == */example.com.cfg.lua ]] || [[ "$f" == */jaas.cfg.lua ]] || [[ "$f" == */localhost.cfg.lua ]]; then
-                continue
-        fi
-        printf "processing prosody conf file: ${f}\n"
-        sed -i "s/authentication = \".*\"/authentication=\"internal_hashed\"/g" $f;
-done
 
 systemctl restart prosody
 systemctl restart jicofo
