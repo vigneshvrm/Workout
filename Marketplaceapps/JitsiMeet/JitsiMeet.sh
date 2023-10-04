@@ -2,6 +2,6 @@
 
 mkdir -p /usr/local/src/JitsiMeet
 
-cd /usr/local/src/JitsiMeet && wget https://github.com/vigneshvrm/Workout/raw/main/Marketplaceapps/JitsiMeet/JitsiMeet-cleanup.sh
+cd /usr/local/src/JitsiMeet && wget https://raw.githubusercontent.com/stackbill/marketplace/main/JitsiMeet/JitsiMeet-cleanup.sh
 
-cd /usr/local/src/JitsiMeet && wget https://github.com/vigneshvrm/Workout/raw/main/Marketplaceapps/JitsiMeet/JitsiMeet.yaml
+cd /usr/local/src/JitsiMeet && wget https://raw.githubusercontent.com/stackbill/marketplace/main/JitsiMeet/JitsiMeet.yaml
