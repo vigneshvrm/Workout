@@ -35,10 +35,29 @@ fi
 done
 
 # Replace the domain name "odoo.domian.com" in the odoo.conf file 
-sed -i "s/odoo.domain.com/$dom/g" /etc/odoo/odoo.conf
+sed -i "s/odoo.domain.com/$dom/g" /etc/nginx/conf.d/odoo.conf
 
 # Reload the Nginx service
 nginx -s reload
 
 # Install SSL for the domian name
-certbot --nginx --non-interactive --redirect  -d $dom --agree-tos --email admin@$dom
+certbot --nginx --non-interactive --redirect  -d $dom --agree-tos
+
+
+#Cleanup script
+rm -rf /usr/local/src/
+mkdir -p /usr/local/src/
+rm -rf /var/lib/cloud/instances/*
+rm -rf /var/lib/cloud/data/*
+find /var/log -mtime -1 -type f -exec truncate -s 0 {} \; >/dev/null 2>&1
+rm -rf /var/log/*.gz /var/log/*.[0-9] /var/log/*-????????
+cat /dev/null > /var/log/lastlog; cat /dev/null > /var/log/wtmp
+apt-get -y autoremove >/dev/null 2>&1
+apt-get -y autoclean >/dev/null 2>&1
+history -c
+cat /dev/null > /root/.bash_history
+unset HISTFILE
+
+rm -rf /root/.bashrc
+cp /etc/skel/.bashrc /root
+rm -rf /opt/cloudstack
