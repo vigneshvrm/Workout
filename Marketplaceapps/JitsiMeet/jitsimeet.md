@@ -3,7 +3,7 @@ title: JitsiMeet
 sidebar_label: JitsiMeet
 ---
 
-|**`Version Latest` `OS Ubuntu 20.04` `HOSTING PANELS`**|  |
+|**`Version Latest` `OS Ubuntu 20.04` `Media`**|  |
 |-------------------------------------------------------|--|
 
 ### Description

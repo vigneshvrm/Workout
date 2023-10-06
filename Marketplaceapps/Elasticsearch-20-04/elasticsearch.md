@@ -21,7 +21,7 @@ Allow the Port 9200  in the security Groups The Port used for all API calls over
 
 ### Allow the ports on the firewall Elasticsearch
 
-One you have deployed the Elasticsearch on your instance kindly allow the port 9200 The elastic search uses this port to listens for HTTP traffic. Currently we have exposed the elastic serach to globally. So kindly the network host expose this node on the network and configure the cluster nodes and the networks in the file.
+One you have deployed the Elasticsearch on your instance kindly allow the port 9200 The elastic search uses this port to listens for HTTP traffic. Currently we have exposed the elastic serach to globally. So kindly allow the network host expose this node on the network and configure the cluster nodes and the networks in the file.
 
 ~~~
 /etc/elasticsearch/elasticsearch.yml
