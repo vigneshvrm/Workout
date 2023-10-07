@@ -51,7 +51,7 @@
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
-      line: "chmod +x /opt/kibana/zimbra-cleanup.sh && /opt/zimbra/zimbra-cleanup.sh"
+      line: "chmod +x /opt/zimbra/zimbra-cleanup.sh && /opt/zimbra/zimbra-cleanup.sh"
       state: present
 
 # 29 - Enable the ssh  acess and restart the sshd service   
