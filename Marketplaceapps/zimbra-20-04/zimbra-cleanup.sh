@@ -1,4 +1,4 @@
-#!/bin/bash
+/bin/bash
 
 RED='\033[1;31m'
 NC='\033[0m'
@@ -14,18 +14,12 @@ echo
 echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
-echo -e "${RED}You can the elastic search using the command below ${NC}"
+echo -e "${RED}The Zimbra Password is $(cat /root/.Zimbraadmin)"
 echo
 echo
-echo -e "${RED}curl -X GET "localhost:9200"${NC}"
-echo
-echo
-echo -e "${RED}The Kibanaadmin Password is $(cat /root/.kibanaadmin)"
-echo
-echo
-echo -e "${RED} Allow the ports 5601 and 9200 in the security group to access the Kibana UI and Elastic Search${NC}"
+pass=$(pwgen -ys 12 1)
 
-#To replace the Domain Name in the apache configuration 
+#To replace the Domain Name in the Zimbra configuration 
 a=0
 while [ $a -eq 0 ]
 do
@@ -41,25 +35,19 @@ do
   a=1
 fi
 done
-
-sed -i "s/domain/$dom/g"  /etc/nginx/sites-enabled/kibana
-
-nginx -s reload >/dev/null 2>&1
-
-# Ask the user if they need SSL for the domain
-read -p "Do you want to install SSL for the domain? (yes/no): " install_ssl
-
-if [[ "$install_ssl" =~ ^[Yy]$ ]]; then
-  # Obtain SSL certificate with Certbot
-  sudo certbot --nginx -d "$dom"
-else
-  echo "SSL installation is skipped. You can install it later using Certbot."
-fi
-
-
+# Prompt the user for the server timezone
+read -p "Enter the server timezone (e.g., 'America/New_York'): " user_timezone
 echo
 echo
-echo -en "${RED}Please take sometime to complete the Kibana Setup.${NC}"
+echo -e "${RED}Kindly wait till the Zimbra installation is completed${NC}"
+echo
+echo
+/usr/local/src/zimbra/zinstaller -p $pass -n mail -t $user_timezone $dom >/dev/null 2>&1
+echo
+echo
+echo -e "${RED}The zimbra installation is completed${NC}"
+echo
+echo
 
 #Cleanup script
 rm -rf /usr/local/src/
@@ -73,6 +61,7 @@ apt-get -y autoremove >/dev/null 2>&1
 apt-get -y autoclean >/dev/null 2>&1
 cat /dev/null > /root/.bash_history
 unset HISTFILE
+rm -rf /root/.bashrc
+cp /etc/skel/.bashrc /root
+rm -rf /opt/zimbra
 history -c
-
-

@@ -1,0 +1,61 @@
+# install Zimbra on ubuntu 20 and 22
+
+- name: Zimbra Setup
+  hosts: localhost
+  tasks:
+
+# 1 - Disable ssh access and restart the ssh service
+  - name: Restarting sshd
+    shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
+
+# 2 - Update the system
+  - name: Updating Packages
+    ansible.builtin.apt:
+      update_cache: yes
+      cache_valid_time: 3600
+
+# 3 - Add the pwgen package
+  - name: Installing pwgen
+    ansible.builtin.apt:
+      name: pwgen
+      state: present
+
+# 3 - Add the zimbra key
+  - name: Adding Zimbra Key
+    shell: apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5234D2B73B6996C7
+
+# 4 - Download the Installer file
+  - name: Downloading Zimbra Installer
+    shell: wget https://raw.githubusercontent.com/Zimbra/zinstaller/master/zinstaller -O /usr/local/src/zimbra/zinstaller
+
+# 5 - Make the installer executable
+  - name: Making Zimbra Installer Executable
+    shell: chmod +x /usr/local/src/zimbra/zinstaller
+
+# 26 - create a cloudstack directory
+  - name: Creating a directory for shell script
+    ansible.builtin.file:
+      path: /opt/zimbra
+      state: directory         
+
+# 27 - copy the shell script from /opt/ to /opt/cloudstack     
+  - name: Copy files for shell script
+    copy:
+      src: "{{ item.confsrc }}"
+      dest: "{{ item.confdest }}"
+      remote_src: yes   
+    with_items: 
+      - { confsrc: '/usr/local/src/zimbra/kibana-cleanup.sh', confdest: '/opt/zimbra'}  
+
+# 28 - Add the shell script to .bashrc
+  - name: Adding a line for shell script
+    lineinfile:
+      path: /root/.bashrc
+      line: "chmod +x /opt/kibana/zimbra-cleanup.sh && /opt/kibana/zimbra-cleanup.sh"
+      state: present
+
+# 29 - Enable the ssh  acess and restart the sshd service   
+  - name: Restarting sshd
+    shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
+
+
