@@ -45,13 +45,13 @@
       dest: "{{ item.confdest }}"
       remote_src: yes   
     with_items: 
-      - { confsrc: '/usr/local/src/zimbra/kibana-cleanup.sh', confdest: '/opt/zimbra'}  
+      - { confsrc: '/usr/local/src/zimbra/zimbra-cleanup.sh', confdest: '/opt/zimbra'}  
 
 # 28 - Add the shell script to .bashrc
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
-      line: "chmod +x /opt/kibana/zimbra-cleanup.sh && /opt/kibana/zimbra-cleanup.sh"
+      line: "chmod +x /opt/kibana/zimbra-cleanup.sh && /opt/zimbra/zimbra-cleanup.sh"
       state: present
 
 # 29 - Enable the ssh  acess and restart the sshd service   
