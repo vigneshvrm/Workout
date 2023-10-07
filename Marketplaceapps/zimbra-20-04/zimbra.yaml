@@ -32,6 +32,10 @@
   - name: Making Zimbra Installer Executable
     shell: chmod +x /usr/local/src/zimbra/zinstaller
 
+# 6 - create a password using pwgen and store it in a file /root/.Zimbraadmin
+  - name: Creating a password for Zimbra
+    shell: pwgen -ys 12 1 > /root/.Zimbraadmin
+
 # 26 - create a cloudstack directory
   - name: Creating a directory for shell script
     ansible.builtin.file:

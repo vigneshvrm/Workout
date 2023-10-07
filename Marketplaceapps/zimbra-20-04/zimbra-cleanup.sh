@@ -10,8 +10,6 @@ echo -e "${RED}
 ################################################################################################################
 ${NC}"
 
-pass=$(pwgen -ys 12 1)
-echo $pass > /root/.Zimbraadmin
 echo
 echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
@@ -33,6 +31,9 @@ do
   a=1
 fi
 done
+
+pass=$(cat /root/.Zimbraadmin)
+
 # Prompt the user for the server timezone
 read -p "Enter the server timezone (e.g., 'America/New_York'): " user_timezone
 echo
