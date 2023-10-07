@@ -4,9 +4,9 @@
   hosts: localhost
   tasks:
 
-# 1 - Disable ssh access and restart the ssh service
-  - name: Restarting sshd
-    shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
+# # 1 - Disable ssh access and restart the ssh service
+#   - name: Restarting sshd
+#     shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
 
 # 2 - Update the system
   - name: Updating Packages
