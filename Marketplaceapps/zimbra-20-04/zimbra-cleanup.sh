@@ -15,6 +15,8 @@ echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
 echo -e "${RED}The Zimbra Password is $(cat /root/.Zimbraadmin)"
+echo
+echo
 #To replace the Domain Name in the Zimbra configuration 
 a=0
 while [ $a -eq 0 ]
