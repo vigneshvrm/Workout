@@ -52,6 +52,12 @@
       - ubuntu-keyring
       - nginx
 
+# 5 - Remove apache2
+  - name: Remove apache2
+    ansible.builtin.apt:
+      name: apache2
+      state: absent
+
 # 5 - Install mariadb server
   - name: Install mariadb server
     ansible.builtin.apt:
