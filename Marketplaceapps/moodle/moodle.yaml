@@ -1,0 +1,169 @@
+# Install moodle on ubuntu 20.04 and 22.04 LTS
+# https://www.linode.com/docs/guides/how-to-install-moodle-on-ubuntu-server-2004/
+# https://www.linode.com/docs/guides/how-to-install-moodle-on-ubuntu-22-04/
+
+- name: Moodle Setup
+  hosts: localhost
+  tasks:
+
+# # 1 - Disable ssh access and restart the ssh service
+#   - name: Restarting sshd
+#     shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
+
+# 2 - Update the system
+  - name: Updating Packages
+    ansible.builtin.apt:
+      update_cache: yes
+      cache_valid_time: 3600
+
+# 3 - Check os version
+  - name: Check os version
+    shell: lsb_release -rs
+    register: os_version
+
+# 4 - Install required Packages
+  - name: Install required Packages
+    ansible.builtin.apt:
+      name: "{{ item }}"
+      state: present
+      update_cache: yes
+      cache_valid_time: 3600
+    with_items:
+      - php
+      - php-cli
+      - php-common
+      - php-curl
+      - php-mbstring
+      - php-xmlrpc
+      - php-soap
+      - php-gd
+      - php-xml
+      - php-intl
+      - php-json
+      - libapache2-mod-php
+      - libapache2-mod-php7.4
+      - libpcre3
+      - libpcre3-dev
+      - graphviz
+      - aspell
+      - ghostscript
+      - clamav
+      - curl
+      - gnupg2
+      - ca-certificates
+      - ubuntu-keyring
+      - nginx
+
+# 5 - Install mariadb server
+  - name: Install mariadb server
+    ansible.builtin.apt:
+      name: ['mariadb-server', 'mariadb-client']
+      state: present
+      update_cache: yes
+
+# 6 - Start and enable mariadb service
+  - name: Start and enable mariadb service
+    ansible.builtin.service:
+      name: mariadb
+      state: started
+      enabled: yes
+
+# 7 - Generate the mysql root password
+  - name: Generating mariadb password
+    shell: openssl rand -hex 24
+    register: rootpassword
+
+# 8 - Store the mysql root password
+  - name: Storing mariadb password
+    copy:
+      dest: "/root/.mariadb_root_password"
+      content: |
+        root_mariadb_user = root
+        root_mariadb_pass = "{{ rootpassword.stdout }}"
+
+# 9 - Secure mariadb installation
+  - name: Secure mariadb installation
+    shell: mysql_secure_installation
+    args:
+      stdin: |
+        y
+        {{ rootpassword }}
+        {{ rootpassword }}
+        y
+        y
+        y
+        y
+
+# 7 - Generate the mysql moodle password
+  - name: Generating mariadb password
+    shell: openssl rand -hex 24
+    register: moodlepassword
+
+
+# 10 - Create a database for moodle
+  - name: Create a database for moodle
+    shell: mysql -u root -p{{ rootpassword.stdout }} -e "CREATE DATABASE moodle;"
+
+# 11 - Grant privileges to the moodle database
+  - name: Grant privileges to the moodle database
+    shell: mysql -u root -p{{ rootpassword.stdout }} -e "GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,CREATE TEMPORARY TABLES,DROP,INDEX,ALTER ON moodle.* TO 'moodleadmin'@'localhost' IDENTIFIED BY '{{ moodlepassword.stdout }}';"
+
+# 12 - Flush privileges
+  - name: Flush privileges
+    shell: mysql -u root -p{{ rootpassword.stdout }} -e "FLUSH PRIVILEGES;"
+
+
+# 13 - Wget the moodle package
+  - name: Wget the moodle package
+    shell: wget -c https://download.moodle.org/download.php/direct/stable402/moodle-latest-402.tgz
+
+# 14 - Extract the moodle package
+  - name: Extract the moodle package
+    shell: tar -zxvf moodle-latest-402.tgz -C /var/www/html/
+
+# 15 - Change the permissions of the moodle directory
+  - name: Change the permissions of the moodle directory
+    shell: chmod -R 755 /var/www/html/moodle
+
+
+# 16 - Create a moodledata directory
+  - name: Create a moodledata directory
+    shell: mkdir /var/moodledata
+
+# 17 - Change the permissions of the moodledata directory
+  - name: Change the permissions of the moodledata directory
+    shell: chmod -R 777 /var/moodledata
+
+
+# 18 - Make a copy of the moodle configuration file
+  - name: Make a copy of the moodle configuration file
+    shell: cp /var/www/html/moodle/config-dist.php /var/www/html/moodle/config.php
+
+# 19 - Edit the moodle configuration file
+  - name: Edit the moodle configuration file
+    lineinfile:
+      path: /var/www/html/moodle/config.php
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    with_items:
+      - { regexp: '^$CFG->dbtype', line: "$CFG->dbtype    = 'mariadb';" }
+      - { regexp: '^$CFG->dblibrary', line: "$CFG->dblibrary = 'native';" }
+      - { regexp: '^$CFG->dbhost', line: "$CFG->dbhost    = 'localhost';" }
+      - { regexp: '^$CFG->dbname', line: "$CFG->dbname    = 'moodle';" }
+      - { regexp: '^$CFG->dbuser', line: "$CFG->dbuser    = 'moodleadmin';" }
+      - { regexp: '^$CFG->dbpass', line: "$CFG->dbpass    = '{{ moodlepassword.stdout }}';" }
+      - { regexp: '^$CFG->prefix', line: "$CFG->prefix    = 'mdl_';" }
+
+# 20 - Copy the moodle.conf from /usr/local/src/moodle to  /etc/nginx/conf.d/
+  - name: Copy the moodle.conf from /usr/local/src/moodle to  /etc/nginx/conf.d/
+    copy:
+      src: moodle.conf
+      dest: /etc/nginx/conf.d/moodle.conf
+
+
+# 21 - Start and enable Nginx service
+  - name: Start and enable Nginx service
+    ansible.builtin.service:
+      name: nginx
+      state: started
+      enabled: yes
