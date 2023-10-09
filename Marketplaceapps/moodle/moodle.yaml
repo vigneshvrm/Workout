@@ -40,8 +40,6 @@
       - php-xml
       - php-intl
       - php-json
-      - libapache2-mod-php
-      - libapache2-mod-php7.4
       - libpcre3
       - libpcre3-dev
       - graphviz
@@ -158,7 +156,8 @@
   - name: Copy the moodle.conf from /usr/local/src/moodle to  /etc/nginx/conf.d/
     copy:
       src: moodle.conf
-      dest: /etc/nginx/conf.d/moodle.conf
+      dest: /etc/nginx/conf.d/
+      remote_src: yes
 
 
 # 21 - Start and enable Nginx service
