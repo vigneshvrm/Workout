@@ -24,6 +24,21 @@
 # 4 - Install required Packages
   - name: Install required Packages
     ansible.builtin.apt:
+      name:  software-properties-common
+      state: present
+
+# 5 - Add the ondrej/php repository
+  - name: Add the ondrej/php repository
+    shell: add-apt-repository ppa:ondrej/php
+
+# 6 - Update the system
+  - name: Updating Packages
+    ansible.builtin.apt:
+      update_cache: yes
+
+# 4 - Install required Packages
+  - name: Install required Packages
+    ansible.builtin.apt:
       name: "{{ item }}"
       state: present
       update_cache: yes
