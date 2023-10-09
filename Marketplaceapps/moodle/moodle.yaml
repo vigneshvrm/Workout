@@ -75,6 +75,10 @@
     shell: a2enmod proxy_fcgi proxy
     # ignore_errors: yes
 
+# 7 - Update the ;max_input_vars = 1000 to 5000 in php.ini file
+  - name: Update the ;max_input_vars = 1000 to 5000 in php.ini file
+    shell: sed -i 's/;max_input_vars = 1000/max_input_vars = 5000/g' /etc/php/8.1/apache2/php.ini
+
 # 5 - Install mariadb server
   - name: Install mariadb server
     ansible.builtin.apt:
