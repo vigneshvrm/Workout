@@ -70,6 +70,24 @@
       state: started
       enabled: yes
 
+# 6 - Add the mariadb key
+  - name: Add the mariadb key
+    shell: apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+
+
+# 7 - Add the mariadb repository based on the os release
+  - name: Add the mariadb repository based on the os release
+    shell: |
+       add-apt-repository 'deb [arch=amd64,arm64,ppc64el] https://mariadb.mirror.liquidtelecom.com/repo/10.6/ubuntu focal main'
+    when: os_version.stdout == '20.04'
+
+  - name: Add the mariadb repository based on the os release
+    shell: |
+       add-apt-repository 'deb [arch=amd64,arm64,ppc64el] https://mariadb.mirror.liquidtelecom.com/repo/10.6/ubuntu Jammy main'
+    when: os_version.stdout == '22.04'
+
+
+
 # 6 - Enable proxy_fcgi and proxy modules
   - name: Enable proxy_fcgi and proxy modules
     shell: a2enmod proxy_fcgi proxy
