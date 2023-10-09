@@ -33,6 +33,7 @@ fi
 done
 
 sed -i "s/learning.testprojects.me/$dom/g"  /etc/apache2/sites-available/moodle.conf
+sed -i "s|example.com/moodle|$dom|g" /var/www/html/config.php
 
 # restart apache2 service
 systemctl restart apache2

@@ -142,6 +142,10 @@
   - name: Extract the moodle package
     shell: tar -zxvf moodle-latest-402.tgz -C /root/
 
+# 15 - Remove the index.html file from /var/www/html/
+  - name: Remove the index.html file from /var/www/html/
+    shell: rm -rf /var/www/html/index.html
+
 # 15 - Copy the moodle directory to /var/www/html/
   - name: Copy the moodle directory to /var/www/html/
     shell: cp -R /root/moodle/. /var/www/html/
@@ -189,3 +193,32 @@
       src: moodle.conf
       dest: /etc/apache2/sites-available/
       remote_src: yes
+
+
+# 26 - create a cloudstack directory
+  - name: Creating a directory for shell script
+    ansible.builtin.file:
+      path: /opt/moodle
+      state: directory         
+
+# 27 - copy the shell script from /opt/ to /opt/cloudstack     
+  - name: Copy files for shell script
+    copy:
+      src: "{{ item.confsrc }}"
+      dest: "{{ item.confdest }}"
+      remote_src: yes   
+    with_items: 
+      - { confsrc: '/usr/local/src/moodle/moodle-cleanup.sh', confdest: '/opt/moodle'}  
+
+# 28 - Add the shell script to .bashrc
+  - name: Adding a line for shell script
+    lineinfile:
+      path: /root/.bashrc
+      line: "chmod +x /opt/moodle/moodle-cleanup.sh && /opt/moodle/moodle-cleanup.sh"
+      state: present
+
+# 29 - Enable the ssh  acess and restart the sshd service   
+  - name: Restarting sshd
+    shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
+
+
