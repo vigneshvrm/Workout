@@ -29,36 +29,35 @@
       update_cache: yes
       cache_valid_time: 3600
     with_items:
-      - php7.4
-      - php7.4-cli
-      - php7.4-common
-      - php7.4-curl
-      - php7.4-mbstring
-      - php7.4-xmlrpc
-      - php7.4-soap
-      - php7.4-gd
-      - php7.4-xml
-      - php7.4-intl
-      - php7.4-json
-      - libpcre3
-      - libpcre3-dev
-      - graphviz
-      - aspell
-      - ghostscript
-      - clamav
-      - curl
-      - gnupg2
-      - ca-certificates
-      - ubuntu-keyring
-      - nginx
-      - php7.4-fpm
-      - php7.4-mysqli
+      - apache2 
+      - php8.1 
+      - postfix
+      - php8.1-mysql 
+      - php8.1-fpm 
+      - php8.1-iconv 
+      - php8.1-mbstring 
+      - php8.1-curl 
+      - php8.1-tokenizer 
+      - php8.1-xmlrpc 
+      - php8.1-soap 
+      - php8.1-ctype 
+      - php8.1-zip 
+      - php8.1-gd 
+      - php8.1-simplexml 
+      - php8.1-xml 
+      - php8.1-intl
 
-# 5 - Remove apache2
-  - name: Remove apache2
-    ansible.builtin.apt:
+# 5 - Start and enable Nginx service
+  - name: Start and enable Nginx service
+    ansible.builtin.service:
       name: apache2
-      state: absent
+      state: started
+      enabled: yes
+
+# 6 - Enable proxy_fcgi and proxy modules
+  - name: Enable proxy_fcgi and proxy modules
+    shell: a2enmod proxy_fcgi proxy
+    # ignore_errors: yes
 
 # 5 - Install mariadb server
   - name: Install mariadb server
@@ -159,16 +158,9 @@
        -e '/^$CFG->directorypermissions/s/.*/$CFG->directorypermissions = 02777;/' /var/www/html/moodle/config.php
 
 
-# 20 - Copy the moodle.conf from /usr/local/src/moodle to  /etc/nginx/conf.d/
-  - name: Copy the moodle.conf from /usr/local/src/moodle to  /etc/nginx/conf.d/
+# 20 - Copy the moodle.conf from /usr/local/src/moodle to  /etc/apache2/sites-available/
+  - name: Copy the moodle.conf from /usr/local/src/moodle to  /etc/apache2/sites-available
     copy:
       src: moodle.conf
-      dest: /etc/nginx/conf.d/
+      dest: /etc/apache2/sites-available/
       remote_src: yes
-
-# 21 - Start and enable Nginx service
-  - name: Start and enable Nginx service
-    ansible.builtin.service:
-      name: nginx
-      state: started
-      enabled: yes
