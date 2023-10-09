@@ -61,6 +61,7 @@
       - php8.1-simplexml 
       - php8.1-xml 
       - php8.1-intl
+      
 
 # 5 - Start and enable Nginx service
   - name: Start and enable Nginx service
@@ -139,11 +140,20 @@
 
 # 14 - Extract the moodle package
   - name: Extract the moodle package
-    shell: tar -zxvf moodle-latest-402.tgz -C /var/www/html/
+    shell: tar -zxvf moodle-latest-402.tgz -C /root/
+
+# 15 - Copy the moodle directory to /var/www/html/
+  - name: Copy the moodle directory to /var/www/html/
+    shell: cp -R /root/moodle /var/www/html/
+
+
+# 16 - Remove the moodle directory from /root/
+  - name: Remove the moodle directory from /root/
+    shell: rm -rf /root/moodle
 
 # 15 - Change the permissions of the moodle directory
   - name: Change the permissions of the moodle directory
-    shell: chmod -R 755 /var/www/html/moodle
+    shell: chmod -R 755 /var/www/html
 
 
 # 16 - Create a moodledata directory
@@ -157,7 +167,7 @@
 
 # 18 - Make a copy of the moodle configuration file
   - name: Make a copy of the moodle configuration file
-    shell: cp /var/www/html/moodle/config-dist.php /var/www/html/moodle/config.php
+    shell: cp /var/www/html/config-dist.php /var/www/html/config.php
 
 # 19 - Edit the moodle configuration file
   - name: Edit the moodle configuration file
@@ -170,7 +180,7 @@
        -e '/^$CFG->dbpass/s/.*/$CFG->dbpass = '\''{{ moodlepassword.stdout }}'\'';/' \
        -e '/^$CFG->prefix/s/.*/$CFG->prefix = '\''mdl_'\'';/' \
        -e '/^$CFG->dataroot/s/.*/$CFG->dataroot = '\''\/var\/moodledata'\'';/' \
-       -e '/^$CFG->directorypermissions/s/.*/$CFG->directorypermissions = 02777;/' /var/www/html/moodle/config.php
+       -e '/^$CFG->directorypermissions/s/.*/$CFG->directorypermissions = 02777;/' /var/www/html/config.php
 
 
 # 20 - Copy the moodle.conf from /usr/local/src/moodle to  /etc/apache2/sites-available/
