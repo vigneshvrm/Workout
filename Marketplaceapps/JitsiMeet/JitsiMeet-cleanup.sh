@@ -53,10 +53,7 @@ rm -rf /var/log/*.gz /var/log/*.[0-9] /var/log/*-????????
 cat /dev/null > /var/log/lastlog; cat /dev/null > /var/log/wtmp
 apt-get -y autoremove >/dev/null 2>&1
 apt-get -y autoclean >/dev/null 2>&1
-history -c
 cat /dev/null > /root/.bash_history
 unset HISTFILE
+history -c
 
-rm -rf /root/.bashrc
-cp /etc/skel/.bashrc /root
-rm -rf /opt/cloudstack
