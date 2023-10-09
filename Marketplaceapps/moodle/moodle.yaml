@@ -144,7 +144,7 @@
 
 # 15 - Copy the moodle directory to /var/www/html/
   - name: Copy the moodle directory to /var/www/html/
-    shell: cp -R /root/moodle /var/www/html/
+    shell: cp -R /root/moodle/. /var/www/html/
 
 
 # 16 - Remove the moodle directory from /root/
