@@ -165,25 +165,6 @@
       dest: /etc/nginx/conf.d/
       remote_src: yes
 
-
-# 22 - Update the moodle configuration file wit the moodledata path and data credentials
-  - name: Update the moodle configuration file
-    lineinfile:
-      path: /var/www/html/moodle/config.php
-      regexp: "{{ item.regexp }}"
-      line: "{{ item.line }}"
-    with_items:
-
-
-
-$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mariadb', 'mysqli', 'auroramysql', 'sqlsrv' or 'oci'
-$CFG->dbname    = 'moodle';     // database name, eg moodle
-$CFG->dbuser    = 'username';   // your database username
-$CFG->dbpass    = 'password';   // your database password
-$CFG->dataroot  = '/home/example/moodledata';
-$CFG->directorypermissions = 02777;
-
-
 # 21 - Start and enable Nginx service
   - name: Start and enable Nginx service
     ansible.builtin.service:
