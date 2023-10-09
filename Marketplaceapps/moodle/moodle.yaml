@@ -51,6 +51,7 @@
       - ca-certificates
       - ubuntu-keyring
       - nginx
+      - php7.4-fpm
 
 # 5 - Remove apache2
   - name: Remove apache2
@@ -145,18 +146,17 @@
 
 # 19 - Edit the moodle configuration file
   - name: Edit the moodle configuration file
-    lineinfile:
-      path: /var/www/html/moodle/config.php
-      regexp: "{{ item.regexp }}"
-      line: "{{ item.line }}"
-    with_items:
-      - { regexp: '^$CFG->dbtype', line: "$CFG->dbtype    = 'mariadb';" }
-      - { regexp: '^$CFG->dblibrary', line: "$CFG->dblibrary = 'native';" }
-      - { regexp: '^$CFG->dbhost', line: "$CFG->dbhost    = 'localhost';" }
-      - { regexp: '^$CFG->dbname', line: "$CFG->dbname    = 'moodle';" }
-      - { regexp: '^$CFG->dbuser', line: "$CFG->dbuser    = 'moodleadmin';" }
-      - { regexp: '^$CFG->dbpass', line: "$CFG->dbpass    = '{{ moodlepassword.stdout }}';" }
-      - { regexp: '^$CFG->prefix', line: "$CFG->prefix    = 'mdl_';" }
+    shell: |
+       sed -i -e '/^$CFG->dbtype/s/.*/$CFG->dbtype = '\''mariadb'\'';/' \
+       -e '/^$CFG->dblibrary/s/.*/$CFG->dblibrary = '\''native'\'';/' \
+       -e '/^$CFG->dbhost/s/.*/$CFG->dbhost = '\''localhost'\'';/' \
+       -e '/^$CFG->dbname/s/.*/$CFG->dbname = '\''moodle'\'';/' \
+       -e '/^$CFG->dbuser/s/.*/$CFG->dbuser = '\''moodleadmin'\'';/' \
+       -e '/^$CFG->dbpass/s/.*/$CFG->dbpass = '\''{{ moodlepassword.stdout }}'\'';/' \
+       -e '/^$CFG->prefix/s/.*/$CFG->prefix = '\''mdl_'\'';/' \
+       -e '/^$CFG->dataroot/s/.*/$CFG->dataroot = '\''\/var\/moodledata'\'';/' \
+       -e '/^$CFG->directorypermissions/s/.*/$CFG->directorypermissions = 02777;/' /var/www/html/moodle/config.php
+
 
 # 20 - Copy the moodle.conf from /usr/local/src/moodle to  /etc/nginx/conf.d/
   - name: Copy the moodle.conf from /usr/local/src/moodle to  /etc/nginx/conf.d/
@@ -164,6 +164,24 @@
       src: moodle.conf
       dest: /etc/nginx/conf.d/
       remote_src: yes
+
+
+# 22 - Update the moodle configuration file wit the moodledata path and data credentials
+  - name: Update the moodle configuration file
+    lineinfile:
+      path: /var/www/html/moodle/config.php
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    with_items:
+
+
+
+$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mariadb', 'mysqli', 'auroramysql', 'sqlsrv' or 'oci'
+$CFG->dbname    = 'moodle';     // database name, eg moodle
+$CFG->dbuser    = 'username';   // your database username
+$CFG->dbpass    = 'password';   // your database password
+$CFG->dataroot  = '/home/example/moodledata';
+$CFG->directorypermissions = 02777;
 
 
 # 21 - Start and enable Nginx service
