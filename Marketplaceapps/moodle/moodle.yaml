@@ -61,6 +61,8 @@
       - php8.1-simplexml 
       - php8.1-xml 
       - php8.1-intl
+      - certbot 
+      - python3-certbot-apache
       
 
 # 5 - Start and enable Nginx service

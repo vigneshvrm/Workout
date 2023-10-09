@@ -35,6 +35,9 @@ done
 sed -i "s/learning.testprojects.me/$dom/g"  /etc/apache2/sites-available/moodle.conf
 sed -i "s|example.com/moodle|$dom|g" /var/www/html/config.php
 
+certbot --apache -d $dom --email admin@$dom --agree-tos --non-interactive --redirect
+
+
 # restart apache2 service
 systemctl restart apache2
 
