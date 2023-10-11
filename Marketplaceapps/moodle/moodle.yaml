@@ -6,9 +6,9 @@
   hosts: localhost
   tasks:
 
-# # 1 - Disable ssh access and restart the ssh service
-#   - name: Restarting sshd
-#     shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
+# 1 - Disable ssh access and restart the ssh service
+  - name: Restarting sshd
+    shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
 
 # 2 - Update the system
   - name: Updating Packages
@@ -144,6 +144,14 @@
     shell: openssl rand -hex 24
     register: moodlepassword
 
+# 8 - Store the mysql root password
+  - name: Storing mariadb password
+    copy:
+      dest: "/root/.mariadb_moodleadmin_password"
+      content: |
+        root_mariadb_user = moodleadmin
+        root_mariadb_pass = "{{ moodlepassword.stdout }}"
+
 
 # 10 - Create a database for moodle
   - name: Create a database for moodle
@@ -217,6 +225,11 @@
       src: moodle.conf
       dest: /etc/apache2/sites-available/
       remote_src: yes
+
+
+# 22 - remove the 000-default-le-ssl.conf and 000-default.conf from /etc/apache2/sites-available/
+  - name: remove the 000-default-le-ssl.conf and 000-default.conf from /etc/apache2/sites-available/
+    shell: rm -rf /etc/apache2/sites-available/000-default-le-ssl.conf /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/default-ssl.conf
 
 
 # 26 - create a cloudstack directory
