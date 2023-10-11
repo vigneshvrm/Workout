@@ -14,6 +14,12 @@ echo
 echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
+echo -e "${RED}The Mariadb root Password is $(cat /root/.mariadb_root_password)${NC}"
+echo
+echo
+echo -e "${RED}The Moodleadmin user Password is $(cat /root/.mariadb_moodleadmin_password)${NC}"
+echo
+echo
 
 #To replace the Domain Name in the apache configuration 
 a=0
