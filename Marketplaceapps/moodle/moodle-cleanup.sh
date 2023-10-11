@@ -38,7 +38,7 @@ do
 fi
 done
 
-sed -i "s/learning.testprojects.me/$dom/g"  /etc/apache2/sites-available/moodle.conf
+sed -i "s/learning.testprojects.me/$dom/g"  /etc/apache2/conf-enabled/moodle.conf
 sed -i "s|example.com/moodle|$dom|g" /var/www/html/config.php
 
 
