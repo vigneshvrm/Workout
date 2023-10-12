@@ -47,10 +47,6 @@ sed -i "s|example.com/moodle|$dom|g" /var/www/html/config.php
 systemctl restart apache2
 
 
-
-
-
-
 #Cleanup script
 rm -rf /usr/local/src/
 mkdir -p /usr/local/src/
