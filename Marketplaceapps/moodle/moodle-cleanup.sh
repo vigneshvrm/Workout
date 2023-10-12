@@ -46,7 +46,7 @@ sed -i "s|example.com/moodle|$dom|g" /var/www/html/config.php
 # restart apache2 service
 systemctl restart apache2
 
-certbot --apache  -d $dom --non-interactive --agree-tos --email admin@$dom
+
 
 
 
