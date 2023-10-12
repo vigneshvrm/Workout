@@ -3,8 +3,8 @@ title: Odoo
 sidebar_label: Odoo
 ---
 
-|**`Version Latest` `OS Ubuntu 20.04` `Framework`**|  |
-|-------------------------------------------------------|--|
+|**`Version Latest` `OS Ubuntu 20.04` `Business Apps`**|  |
+|------------------------------------------------------|--|
 
 ### Description
 
