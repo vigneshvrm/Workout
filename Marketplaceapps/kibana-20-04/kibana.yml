@@ -1,4 +1,4 @@
-- name: Elasticsearch Setup
+- name: Kibana Setup
   hosts: localhost
   tasks:
 

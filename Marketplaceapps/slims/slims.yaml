@@ -56,9 +56,9 @@
       - php7.3-dev
       - php-pear
       - yaz
-      - libyaz
+      - libyaz5
       - libnet-z3950-zoom-perl
-      - libyaz-dev
+      - libyaz5-dev
 
 # 8 - Install Pecl yaz
   - name: Installing Pecl yaz
