@@ -58,7 +58,7 @@
       - yaz
       - libyaz5
       - libnet-z3950-zoom-perl
-      - libyaz5-dev
+      - libyaz-dev
 
 # 8 - Install Pecl yaz
   - name: Installing Pecl yaz
