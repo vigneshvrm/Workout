@@ -151,7 +151,7 @@
       dest: "/root/.mariadb_slims_password"
       content: |
         root_mariadb_user = slims
-        root_mariadb_pass = "{{ slims.stdout }}"
+        root_mariadb_pass = "{{ slimspassword.stdout }}"
 
 # 21 - Create the slims database
   - name: Creating the slims database
