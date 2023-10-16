@@ -179,8 +179,24 @@
   - name: Extracting the slims tar file
     unarchive:
       src: /tmp/slims9_bulian-9.0.0.tar.gz
-      dest: /var/www/html
+      dest: /tmp
       remote_src: yes
+
+# 28 - Remove default index.html file
+  - name: Removing default index.html file
+    file:
+      path: /var/www/html/index.html
+      state: absent
+
+# 30 - copy content form slims9_bulian-9.0.0 to html
+  - name: Copying content form slims9_bulian-9.0.0 to html
+    shell: rsync -avz /tmp/slims9_bulian-9.0.0/* /var/www/html/
+
+
+# 31 - Change the ownership of html
+  - name: Changing the ownership of html
+    shell: chown -R root:root /var/www/html/
+
 
 # 26 - create a cloudstack directory
   - name: Creating a directory for shell script
