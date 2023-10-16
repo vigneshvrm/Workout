@@ -39,7 +39,7 @@ do
 fi
 done
 
-sed -i "s/learning.testprojects.me/$dom/g"  /etc/apache2/sites-available/001-default.conf
+sed -i "s/your.domain.name/$dom/g"  /etc/apache2/sites-available/001-default.conf
 
 
 # restart apache2 service
