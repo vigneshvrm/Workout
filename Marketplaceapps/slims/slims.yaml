@@ -197,6 +197,9 @@
   - name: Changing the ownership of html
     shell: chown -R root:root /var/www/html/
 
+# 32 - Change 777 permission to directory
+  - name: Changing 777 permission to directory
+    shell: chmod -R 777 /var/www/html/config /var/www/html/files /var/www/html/images /var/www/html/repository
 
 # 26 - create a cloudstack directory
   - name: Creating a directory for shell script
