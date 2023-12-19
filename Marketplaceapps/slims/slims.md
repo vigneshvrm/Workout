@@ -40,3 +40,17 @@ For detailed documentation, refer to subsequent chapters. Visit http://slims.web
 
 ### Getting started after deploying SLiMS
 
+
+You can log into the instance as ubuntu using either the password you set when you created the instance or with an SSH key if you added one during creation.
+
+You can then switch the user to root without a password by entering the following command, and note the credenatils
+
+~~~
+sudo su -
+~~~
+
+Upon logging in, please take note of the MariaDB passwords located in the root directory. Enter the domain name for configuration on Apache once the script finishes running. Access the domain through a browser. Test the database using the provided credentials, create the admin user, and initiate the installation process.
+
+### Security Procedure
+
+The "install" folder in your SLiMS directory already exists. For security purposes, kindly rename or delete it from your VM.
