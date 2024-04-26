@@ -137,20 +137,23 @@
       src: /usr/local/src/nextcloud/nextcloud.conf
       dest: /etc/apache2/sites-available/nextcloud.conf
 
+# 16 - change owner ship to www-data to /var/www/html/
+  - name: change owner ship to www-data to /var/www/html/
+    shell: chown www-data. /var/www/html/ -R
 
-# 16 - Restart the apache service
+# 17 - Restart the apache service
   - name: Restart the apache service
     service:
       name: apache2
       state: restarted
 
-# 17 - create a cloudstack directory
+# 18 - create a cloudstack directory
   - name: Creating a directory for shell script
     ansible.builtin.file:
       path: /opt/nextcloud
       state: directory         
 
-# 18 - copy the shell script from /opt/ to /opt/cloudstack     
+# 19 - copy the shell script from /opt/ to /opt/cloudstack     
   - name: Copy files for shell script
     copy:
       src: "{{ item.confsrc }}"
@@ -159,13 +162,13 @@
     with_items: 
       - { confsrc: '/usr/local/src/nextcloud/nextcloud-cleanup.sh', confdest: '/opt/nextcloud'}  
 
-# 19 - Add the shell script to .bashrc
+# 20 - Add the shell script to .bashrc
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
       line: "chmod +x /opt/nextcloud/nextcloud-cleanup.sh && /opt/nextcloud/nextcloud-cleanup.sh"
       state: present
 
-# 20 - Enable the ssh  acess and restart the sshd service   
+# 21 - Enable the ssh  acess and restart the sshd service   
   - name: Restarting sshd
     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
