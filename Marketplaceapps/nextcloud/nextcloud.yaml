@@ -110,7 +110,7 @@
 # 10 - Remove the default html file
   - name: Remove the Default files from /var/www/html
     file:
-      path: /var/www/html
+      path: /var/www/html/index.html
       state: absent
 
 # 11 - Move the folder from /tmp to /var/www
