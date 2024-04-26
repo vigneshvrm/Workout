@@ -57,7 +57,7 @@ install_ssl="${install_ssl,,}"
 
 if [[ "$install_ssl" == "yes" ]]; then
   # Obtain SSL certificate with Certbot for Apache
-  sudo certbot --apache -d "$dom" --register-unsafely-without-email
+  sudo certbot --apache -d "$dom" --register-unsafely-without-email --agree-tos > /dev/null 2>&1
 
   # Check if SSL certificate is installed
   if [[ -f "/etc/letsencrypt/live/$dom/fullchain.pem" && -f "/etc/letsencrypt/live/$dom/privkey.pem" ]]; then
@@ -75,8 +75,8 @@ fi
 echo
 echo
 echo -en "${RED}Please take sometime to complete the Nextcloud Setup.${NC}"
-
-
+echo
+echo
 
 
 #Cleanup script
