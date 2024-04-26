@@ -23,7 +23,8 @@
        - apache2 
        - mariadb-server 
        - libapache2-mod-php 
-       - php-gd php-mysql 
+       - php-gd 
+       - php-mysql 
        - php-curl 
        - php-mbstring 
        - php-intl 
