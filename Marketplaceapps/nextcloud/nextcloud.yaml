@@ -143,27 +143,28 @@
 
  # 17 - Unlink the default conf from apache2  
   - name: Unlink the default conf from apache2
-    shell: /etc/apache2/sites-enabled/000-default.conf
+    shell: unlink /etc/apache2/sites-enabled/000-default.conf
 
-# 17 - Restart the apache service
-  - name: Restart the apache service
-    service:
-      name: apache2
-      state: restarted
-
-# 10 - Remove the default conf file
+# 18 - Remove the default conf file
   - name: Remove the Default conf
     file:
       path: /etc/apache2/sites-available/000-default.conf
       state: absent
 
-# 18 - create a cloudstack directory
+  
+# 19 - Restart the apache service
+  - name: Restart the apache service
+    service:
+      name: apache2
+      state: restarted
+
+# 20 - create a cloudstack directory
   - name: Creating a directory for shell script
     ansible.builtin.file:
       path: /opt/nextcloud
       state: directory         
 
-# 19 - copy the shell script from /opt/ to /opt/cloudstack     
+# 21 - copy the shell script from /opt/ to /opt/cloudstack     
   - name: Copy files for shell script
     copy:
       src: "{{ item.confsrc }}"
@@ -172,13 +173,13 @@
     with_items: 
       - { confsrc: '/usr/local/src/nextcloud/nextcloud-cleanup.sh', confdest: '/opt/nextcloud'}  
 
-# 20 - Add the shell script to .bashrc
+# 22 - Add the shell script to .bashrc
   - name: Adding a line for shell script
     lineinfile:
       path: /root/.bashrc
       line: "chmod +x /opt/nextcloud/nextcloud-cleanup.sh && /opt/nextcloud/nextcloud-cleanup.sh"
       state: present
 
-# 21 - Enable the ssh  acess and restart the sshd service   
+# 23 - Enable the ssh  acess and restart the sshd service   
   - name: Restarting sshd
     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
