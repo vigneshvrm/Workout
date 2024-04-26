@@ -42,6 +42,8 @@ fi
 done
 
 sed -i "s/\$domain/$dom/g" /etc/apache2/sites-available/nextcloud.conf
+a2ensite nextcloud.conf
+systemctl reload apache2
 
 
 # Ask the user if they need SSL for the domain
@@ -49,7 +51,7 @@ read -p "Do you want to install SSL for the domain? (yes/no): " install_ssl
 
 if [[ "$install_ssl" =~ ^[Yy]$ ]]; then
   # Obtain SSL certificate with Certbot for Apache
-  sudo certbot --apache -d "$dom"
+  sudo certbot --apache -d "$dom" --register-unsafely-without-email 
 
   # Check if SSL certificate is installed
   if [[ -f "/etc/letsencrypt/live/$dom/fullchain.pem" && -f "/etc/letsencrypt/live/$dom/privkey.pem" ]]; then
