@@ -141,11 +141,21 @@
   - name: change owner ship to www-data to /var/www/html/
     shell: chown www-data. /var/www/html/ -R
 
+ # 17 - Unlink the default conf from apache2  
+  - name: Unlink the default conf from apache2
+    shell: /etc/apache2/sites-enabled/000-default.conf
+
 # 17 - Restart the apache service
   - name: Restart the apache service
     service:
       name: apache2
       state: restarted
+
+# 10 - Remove the default conf file
+  - name: Remove the Default conf
+    file:
+      path: /etc/apache2/sites-available/000-default.conf
+      state: absent
 
 # 18 - create a cloudstack directory
   - name: Creating a directory for shell script

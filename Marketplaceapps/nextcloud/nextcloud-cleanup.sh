@@ -54,7 +54,7 @@ if [[ "$install_ssl" =~ ^[Yy]$ ]]; then
   # Check if SSL certificate is installed
   if [[ -f "/etc/letsencrypt/live/$dom/fullchain.pem" && -f "/etc/letsencrypt/live/$dom/privkey.pem" ]]; then
     # Create virtual host entry for port 443
-    sudo sed -i "s/80/443/g" /etc/apache2/sites-available/"$dom".conf
+    sudo sed -i "s/80/443/g" /etc/apache2/sites-available/nextcloud.conf
     sudo systemctl reload apache2
   else
     echo "SSL certificate installation failed. Please check Certbot logs for more details."
