@@ -42,21 +42,28 @@ fi
 done
 
 sed -i "s/\$domain/$dom/g" /etc/apache2/sites-available/nextcloud.conf
-a2ensite nextcloud.conf
+a2ensite nextcloud.conf > /dev/null 2>&1
+
+# Restart Apache
+ 
 systemctl reload apache2
 
 
 # Ask the user if they need SSL for the domain
 read -p "Do you want to install SSL for the domain? (yes/no): " install_ssl
 
-if [[ "$install_ssl" =~ ^[Yy]$ ]]; then
+# Convert user input to lowercase for case-insensitive comparison
+install_ssl="${install_ssl,,}"
+
+if [[ "$install_ssl" == "yes" ]]; then
   # Obtain SSL certificate with Certbot for Apache
-  sudo certbot --apache -d "$dom" --register-unsafely-without-email 
+  sudo certbot --apache -d "$dom" --register-unsafely-without-email
 
   # Check if SSL certificate is installed
   if [[ -f "/etc/letsencrypt/live/$dom/fullchain.pem" && -f "/etc/letsencrypt/live/$dom/privkey.pem" ]]; then
-    # Create virtual host entry for port 443
-    sudo sed -i "s/80/443/g" /etc/apache2/sites-available/nextcloud.conf
+    # Update virtual host configuration for port 443
+    sudo sed -i 's/<VirtualHost \*:80>/<VirtualHost \*:443>\n\tServerName '"$dom"'/g' /etc/apache2/sites-available/nextcloud.conf
+    # sudo sed -i 's/<\/VirtualHost>/<\/VirtualHost>\n\tSSLEngine on\n\tSSLCertificateFile \/etc\/letsencrypt\/live\/'"$dom"'\/fullchain.pem\n\tSSLCertificateKeyFile \/etc\/letsencrypt\/live\/'"$dom"'\/privkey.pem/g' /etc/apache2/sites-available/nextcloud.conf
     sudo systemctl reload apache2
   else
     echo "SSL certificate installation failed. Please check Certbot logs for more details."
@@ -64,7 +71,6 @@ if [[ "$install_ssl" =~ ^[Yy]$ ]]; then
 else
   echo "SSL installation is skipped. You can install it later using Certbot."
 fi
-
 
 echo
 echo
