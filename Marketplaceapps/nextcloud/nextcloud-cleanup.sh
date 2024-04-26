@@ -50,6 +50,15 @@ read -p "Do you want to install SSL for the domain? (yes/no): " install_ssl
 if [[ "$install_ssl" =~ ^[Yy]$ ]]; then
   # Obtain SSL certificate with Certbot for Apache
   sudo certbot --apache -d "$dom"
+
+  # Check if SSL certificate is installed
+  if [[ -f "/etc/letsencrypt/live/$dom/fullchain.pem" && -f "/etc/letsencrypt/live/$dom/privkey.pem" ]]; then
+    # Create virtual host entry for port 443
+    sudo sed -i "s/80/443/g" /etc/apache2/sites-available/"$dom".conf
+    sudo systemctl reload apache2
+  else
+    echo "SSL certificate installation failed. Please check Certbot logs for more details."
+  fi
 else
   echo "SSL installation is skipped. You can install it later using Certbot."
 fi
@@ -58,6 +67,9 @@ fi
 echo
 echo
 echo -en "${RED}Please take sometime to complete the Nextcloud Setup.${NC}"
+
+
+
 
 #Cleanup script
 rm -rf /usr/local/src/
