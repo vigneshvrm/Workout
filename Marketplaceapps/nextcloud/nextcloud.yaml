@@ -99,13 +99,13 @@
   - name: Download latest version of Nextcloud
     get_url:
       url: "https://download.nextcloud.com/server/releases/latest.zip"
-      dest: "/tmp/latest.zip"
+      dest: "/usr/local/src/latest.zip"
 
 # 9 - Unzip the latest version of nextcloud
   - name: Unzip the latest version of Nextcloud
     unarchive:
-      src: "/tmp/latest.zip"
-      dest: "/tmp/"
+      src: "/usr/local/src/latest.zip"
+      dest: "/usr/local/src/"
 
 # 10 - Remove the default html file
   - name: Remove the Default files from /var/www/html
@@ -113,9 +113,9 @@
       path: /var/www/html/index.html
       state: absent
 
-# 11 - Move the folder from /tmp to /var/www
-  - name:  Move the folder from /tmp/nextcloud to /var/www/html
-    shell: rsync -avz /tmp/nextcloud/. /var/www/html/.
+# 11 - Move the folder from /usr/local/src to /var/www
+  - name:  Move the folder from /usr/local/src/nextcloud to /var/www/html
+    shell: rsync -avz /usr/local/src/nextcloud/. /var/www/html/.
 
 # 12 - Sed command to uncomment the cluster-enabled on the redis config
   - name: Sed command to uncomment the cluster-enabled on the redis config
