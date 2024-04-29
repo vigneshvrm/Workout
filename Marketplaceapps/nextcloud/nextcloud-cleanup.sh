@@ -14,10 +14,10 @@ echo
 echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
-echo -e "${RED}Use the Below Password for logging into MySQL${NC}"
-echo
-cat /root/.root_db_pass
-echo
+# echo -e "${RED}Use the Below Password for logging into MySQL${NC}"
+# echo
+# cat /root/.root_db_pass
+# echo
 echo -e "${RED}Use the Below Password for logging into nextcloud DB${NC}"
 echo
 cat /root/.user_db_pass
@@ -29,7 +29,7 @@ a=0
 while [ $a -eq 0 ]
 do
  echo -e "${RED}To cancel setup, press Ctrl+C.  This script will run again on your next login:${NC}"
- echo -e "${RED}Enter the domain name for your new WordPress site:${NC}"
+ echo -e "${RED}Enter the domain name for your new Nextcloud site:${NC}"
  echo -e "${RED}(ex. example.org or test.example.org) do not include www or http/s:${NC}"
  read -p "Domain/Subdomain name: " dom
  if [ -z "$dom" ]
