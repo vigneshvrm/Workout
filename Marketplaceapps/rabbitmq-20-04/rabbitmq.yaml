@@ -13,8 +13,10 @@
           name: [ 'curl', 'software-properties-common', 'apt-transport-https', 'lsb-release', 'gnupg2' ]
           state: latest
 
-      - name: Import Erlang GPG Key and repo
-        shell: wget -O- https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc | apt-key add -
+      - name: Import Erlang GPG Key 
+        apt_key:
+          url: https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
+          state: present
         # with_items:
         #   # - curl -fsSL https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/erlang.gpg
         #   # - echo "deb https://packages.erlang-solutions.com/ubuntu $(lsb_release -cs) contrib" | sudo tee /etc/apt/sources.list.d/erlang.list
