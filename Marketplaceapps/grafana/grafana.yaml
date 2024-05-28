@@ -1,0 +1,75 @@
+# Install Grafana on ubuntu 22.04 & 20.04 based on the official quick install guide
+# https://grafana.com/docs/grafana/latest/setup-grafana/installation/debian/
+
+- name: Grafana Setup
+  hosts: localhost
+  tasks:
+# #1 - Disable ssh access and restart the ssh service
+#   - name: Restarting sshd
+#     shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
+
+# 2 - Update the system
+  - name: Updating Packages
+    ansible.builtin.apt:
+      update_cache: yes
+
+# 3 - Install the requried packages
+  - name: Install Packages
+    ansible.builtin.apt:
+      name:
+         - apt-transport-https 
+         - software-properties-common 
+         - wget
+      state: latest
+
+# 4 - Make directory for the Grafana keyrings
+  - name: Create directory for the Grafana keyrings
+    ansible.builtin.file:
+     path: /etc/apt/keyrings
+     state: directory
+
+# 5 - Added the keys for Grafana
+  - name: Added the keys for Grafana
+    shell: wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+
+# 6 - Add the stable version for grafana in the source list
+  - name: Add the stable version for grafana in the source list
+    shell: echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+
+# 7 - Update the system
+  - name: Updating Packages
+    ansible.builtin.apt:
+      update_cache: yes
+
+# 8 - Install Grafana
+  - name: Install Grafana
+    ansible.builtin.apt:
+      name: grafana
+      state: present
+
+ # 9 - Start and enable the grafana service
+  - name: Start and enable the grafana service
+    service:
+      name: grafana-server
+      state: started
+      enabled: yes
+  
+# 10 - copy the shell script from /opt/ to /opt/cloudstack     
+  - name: Copy files for shell script
+    copy:
+      src: "{{ item.confsrc }}"
+      dest: "{{ item.confdest }}"
+      remote_src: yes   
+    with_items: 
+      - { confsrc: '/usr/local/src/grafana/grafana-cleanup.sh', confdest: '/opt/grafana'}  
+
+# 11 - Add the shell script to .bashrc
+  - name: Adding a line for shell script
+    lineinfile:
+      path: /root/.bashrc
+      line: "chmod +x /opt/grafana/grafana-cleanup.sh && /opt/grafana/grafana-cleanup.sh"
+      state: present
+
+# # 12 - Enable the ssh  acess and restart the sshd service   
+#   - name: Restarting sshd
+#     shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
