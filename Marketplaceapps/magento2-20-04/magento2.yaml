@@ -208,7 +208,7 @@
 
       - name: Installing Composer
         # shell: chmod +x /usr/local/src/magento2-20-04/composer.sh && /usr/local/src/magento2-20-04/composer.sh
-        shell: cd /usr/local/src/magento2-20-04/  curl -sS https://getcomposer.org/installer | PHP
+        shell: curl -sS https://getcomposer.org/installer | php
 
       - name: Copy Composer file
         copy:
@@ -219,7 +219,7 @@
         file: 
          path: /root/composer.phar
          state: absent
-         
+
       - name: Setting permission for composer
         ansible.builtin.file:
           path: /usr/local/bin/composer
