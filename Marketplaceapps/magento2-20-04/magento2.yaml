@@ -207,14 +207,19 @@
           state: present
 
       - name: Installing Composer
-        shell: chmod +x /usr/local/src/magento2-20-04/composer.sh && /usr/local/src/magento2-20-04/composer.sh
+        # shell: chmod +x /usr/local/src/magento2-20-04/composer.sh && /usr/local/src/magento2-20-04/composer.sh
+        shell: cd /usr/local/src/magento2-20-04/  curl -sS https://getcomposer.org/installer | PHP
 
       - name: Copy Composer file
         copy:
-          src: /usr/local/src/magento2-20-04/composer.phar
+          src: /root/composer.phar
           dest: /usr/local/bin/composer
           remote_src: yes
-
+      - name: Remove old files foo
+        file: 
+         path: /root/composer.phar
+         state: absent
+         
       - name: Setting permission for composer
         ansible.builtin.file:
           path: /usr/local/bin/composer
