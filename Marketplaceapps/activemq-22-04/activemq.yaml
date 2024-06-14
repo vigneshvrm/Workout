@@ -13,44 +13,53 @@
           name: default-jdk 
           state: latest
 
-      # - name: Creating a group for activemq 
-      #   group:
-      #     name: activemq
-      #     state: present
-      #     system: yes
+      - name: Creating a group for activemq 
+        group:
+          name: activemq
+          state: present
+          system: yes
 
-      # - name: Creating a user for activemq 
-      #   ansible.builtin.user:
-      #     name: activemq
-      #     shell: /usr/sbin/nologin
-      #     groups: activemq
-      #     create_home: no
-      #     system: yes
+      - name: Creating a user for activemq 
+        ansible.builtin.user:
+          name: activemq
+          shell: /usr/sbin/nologin
+          groups: activemq
+          create_home: no
+          system: yes
+
+      - name: Get the directory listing
+        uri:
+          url: https://dlcdn.apache.org/activemq/
+          return_content: yes
+        register: webpage
+
+      - name: Find the latest version
+        set_fact:
+          latest_version: "{{ webpage.content | regex_search('href="([0-9.]+)/"', '\\1', True) | last }}"
+
+      - name: Construct download URL
+        set_fact:
+          download_url: "https://dlcdn.apache.org/activemq/{{ latest_version }}/apache-activemq-{{ latest_version }}-bin.tar.gz"
+
+      - name: Download the latest ActiveMQ tarball
+        get_url:
+          url: "{{ download_url }}"
+          dest: "/tmp/apache-activemq-{{ latest_version }}-bin.tar.gz"
+
 
       # - name: Download activemq files
       #   ansible.builtin.unarchive:
-      #     src: https://dlcdn.apache.org/activemq/5.17.4/apache-activemq-5.17.4-bin.tar.gz
+      #     src:  https://dlcdn.apache.org/activemq/ 5.17.4/apache-activemq-5.17.4-bin.tar.gz
       #     dest: /opt/
       #     remote_src: yes
 
-      # - name: Change ownership of a directory
-      #   ansible.builtin.file:
-      #     path: /opt/apache-activemq-5.17.4
-      #     state: directory
-      #     recurse: yes
-      #     owner: activemq
-      #     group: activemq
-
-      - name:  Install ActiveMQ
-        apt:
-          name: activemq
-          state: present
-
-      - name: Start and enable the activemq
-        service:
-          name: activemq
-          state: started
-          enabled: true
+      - name: Change ownership of a directory
+        ansible.builtin.file:
+          path: /opt/apache-activemq-5.17.4
+          state: directory
+          recurse: yes
+          owner: activemq
+          group: activemq
 
       - name: Generating activemq password
         shell: openssl rand -hex 24
