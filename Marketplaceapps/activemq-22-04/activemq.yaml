@@ -49,7 +49,7 @@
 
       - name: Change ownership of a directory
         ansible.builtin.file:
-          path: /opt/apache-activemq-5.17.4
+          path: /opt/apache-activemq-{{ latest_version }}
           state: directory
           recurse: yes
           owner: activemq
