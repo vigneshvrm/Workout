@@ -13,33 +13,44 @@
           name: default-jdk 
           state: latest
 
-      - name: Creating a group for activemq 
-        group:
+      # - name: Creating a group for activemq 
+      #   group:
+      #     name: activemq
+      #     state: present
+      #     system: yes
+
+      # - name: Creating a user for activemq 
+      #   ansible.builtin.user:
+      #     name: activemq
+      #     shell: /usr/sbin/nologin
+      #     groups: activemq
+      #     create_home: no
+      #     system: yes
+
+      # - name: Download activemq files
+      #   ansible.builtin.unarchive:
+      #     src: https://dlcdn.apache.org/activemq/5.17.4/apache-activemq-5.17.4-bin.tar.gz
+      #     dest: /opt/
+      #     remote_src: yes
+
+      # - name: Change ownership of a directory
+      #   ansible.builtin.file:
+      #     path: /opt/apache-activemq-5.17.4
+      #     state: directory
+      #     recurse: yes
+      #     owner: activemq
+      #     group: activemq
+
+      - name:  Install ActiveMQ
+        apt:
           name: activemq
           state: present
-          system: yes
 
-      - name: Creating a user for activemq 
-        ansible.builtin.user:
+      - name: Start and enable the activemq
+        service:
           name: activemq
-          shell: /usr/sbin/nologin
-          groups: activemq
-          create_home: no
-          system: yes
-
-      - name: Download activemq files
-        ansible.builtin.unarchive:
-          src: https://dlcdn.apache.org/activemq/5.17.4/apache-activemq-5.17.4-bin.tar.gz
-          dest: /opt/
-          remote_src: yes
-
-      - name: Change ownership of a directory
-        ansible.builtin.file:
-          path: /opt/apache-activemq-5.17.4
-          state: directory
-          recurse: yes
-          owner: activemq
-          group: activemq
+          state: started
+          enabled: true
 
       - name: Generating activemq password
         shell: openssl rand -hex 24
@@ -106,3 +117,6 @@
 
       - name: Restarting sshd
         shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd" 
+
+
+    
