@@ -28,28 +28,23 @@
           system: yes
 
       - name: Get the directory listing
-        shell: curl -s https://dlcdn.apache.org/activemq/ | grep -oP '(?<=<a href=")[^/]+(?=/")' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1
+        shell: |
+            curl -s https://dlcdn.apache.org/activemq/ \
+            | grep -oP '(?<=<a href=")[^/]+(?=/")' \
+            | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+            | sort -V \
+            | tail -n 1
         register: latest_version
-
-      # - name: Construct download URL
-      #   set_fact:
-      #     download_url: "https://dlcdn.apache.org/activemq/{{ latest_version }}/apache-activemq-{{ latest_version }}-bin.tar.gz"
-
-      # - name: Download the latest ActiveMQ tarball
-      #   get_url:
-      #     url: "{{ download_url }}"
-      #     dest: "/tmp/apache-activemq-{{ latest_version }}-bin.tar.gz"
-
 
       - name: Download activemq files
         ansible.builtin.unarchive:
-          src:  https://dlcdn.apache.org/activemq/{{ latest_version }}/apache-activemq-{{ latest_version }}-bin.tar.gz
+          src:  https://dlcdn.apache.org/activemq/{{ latest_version.stdout }}/apache-activemq-{{ latest_version.stdout }}-bin.tar.gz
           dest: /opt/
           remote_src: yes
 
       - name: Change ownership of a directory
         ansible.builtin.file:
-          path: /opt/apache-activemq-{{ latest_version }}
+          path: /opt/apache-activemq-{{ latest_version.stdout }}
           state: directory
           recurse: yes
           owner: activemq
