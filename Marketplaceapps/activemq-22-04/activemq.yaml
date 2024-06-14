@@ -28,30 +28,24 @@
           system: yes
 
       - name: Get the directory listing
-        uri:
-          url: https://dlcdn.apache.org/activemq/
-          return_content: yes
-        register: webpage
+        shell: curl -s https://dlcdn.apache.org/activemq/ | grep -oP '(?<=<a href=")[^/]+(?=/")' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1
+        register: latest_version
 
-      - name: Find the latest version
-        set_fact:
-          latest_version: "{{ webpage.content | regex_search('href="([0-9.]+)/"', '\\1', True) | last }}"
+      # - name: Construct download URL
+      #   set_fact:
+      #     download_url: "https://dlcdn.apache.org/activemq/{{ latest_version }}/apache-activemq-{{ latest_version }}-bin.tar.gz"
 
-      - name: Construct download URL
-        set_fact:
-          download_url: "https://dlcdn.apache.org/activemq/{{ latest_version }}/apache-activemq-{{ latest_version }}-bin.tar.gz"
-
-      - name: Download the latest ActiveMQ tarball
-        get_url:
-          url: "{{ download_url }}"
-          dest: "/tmp/apache-activemq-{{ latest_version }}-bin.tar.gz"
+      # - name: Download the latest ActiveMQ tarball
+      #   get_url:
+      #     url: "{{ download_url }}"
+      #     dest: "/tmp/apache-activemq-{{ latest_version }}-bin.tar.gz"
 
 
-      # - name: Download activemq files
-      #   ansible.builtin.unarchive:
-      #     src:  https://dlcdn.apache.org/activemq/ 5.17.4/apache-activemq-5.17.4-bin.tar.gz
-      #     dest: /opt/
-      #     remote_src: yes
+      - name: Download activemq files
+        ansible.builtin.unarchive:
+          src:  https://dlcdn.apache.org/activemq/{{ latest_version }}/apache-activemq-{{ latest_version }}-bin.tar.gz
+          dest: /opt/
+          remote_src: yes
 
       - name: Change ownership of a directory
         ansible.builtin.file:
