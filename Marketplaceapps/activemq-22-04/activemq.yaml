@@ -68,8 +68,8 @@
         shell: "{{ item }}"
         with_items:
           - "sed -i 's/127.0.0.1/0.0.0.0/g' /opt/apache-activemq-{{ latest_version.stdout }}/conf/jetty.xml"
-          - "sed -i 's/admin: admin, admin/admin: {{ activemqadminpassword.stdout }}, admin/g' /opt/apache-activemq-{{ latest_version.stdout }}/conf/jetty-realm.properties"
-          - "sed -i 's/user: user, user//g' /opt/apache-activemq-{{ latest_version.stdout }}/conf/jetty-realm.properties"
+          - "sed -i 's/admin: admin, admin/admin: {{ activemqadminpassword.stdout }}, admin/g' /opt/apache-activemq-{{ latest_version.stdout }}/conf/users.properties"
+          # - "sed -i 's/user: user, user//g' /opt/apache-activemq-{{ latest_version.stdout }}/conf/jetty-realm.properties"
 
       - name: Copy files for shell script
         copy:
