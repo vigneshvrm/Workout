@@ -23,7 +23,7 @@
       - name: Updating Packages
         ansible.builtin.apt:
           update_cache: yes
-          
+
       - name: installing podman
         package:
           name: "podman"
@@ -62,7 +62,7 @@
           create: yes
 
       - name: Installing rocketchat
-        shell: podman compose --env-file /root/rocketchat/.env -f /root/compose.yml up -d
+        shell: podman compose -e /root/rocketchat/.env -f /root/compose.yml up -d
         register: podman_out
 
       - name: Creating a directory for shell script
