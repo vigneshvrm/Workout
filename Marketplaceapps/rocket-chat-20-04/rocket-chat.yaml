@@ -62,8 +62,8 @@
           create: yes
 
       - name: Installing rocketchat
-        shell: podman compose --env-file /root/rocketchat/.env -f /root/compose.yml up -d
-        register: podman_out
+        shell: docker compose --env-file /root/rocketchat/.env -f /root/compose.yml up -d
+        register: docker_out
 
       - name: Creating a directory for shell script
         ansible.builtin.file:
