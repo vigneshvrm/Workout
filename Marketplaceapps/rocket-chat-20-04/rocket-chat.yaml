@@ -8,14 +8,19 @@
         ansible.builtin.apt:
           update_cache: yes
 
-      - name: Download file for docker and docker compose
-        ansible.builtin.get_url:
-          url: https://get.docker.com
-          dest: /usr/local/src/docker.sh
-          mode: '0755'
+      # - name: Download file for docker and docker compose
+      #   ansible.builtin.get_url:
+      #     url: https://get.docker.com
+      #     dest: /usr/local/src/docker.sh
+      #     mode: '0755'
 
-      - name: Installing docker and docker compose
-        shell: /usr/local/src/docker.sh
+      - name: installing podman
+        package:
+          name: "podman"
+          state: present
+
+      # - name: Installing docker and docker compose
+      #   shell: /usr/local/src/docker.sh
 
       - name: Download compose file for Installing rocker chat
         ansible.builtin.get_url:
@@ -47,8 +52,8 @@
           create: yes
 
       - name: Installing rocketchat
-        shell: docker compose --env-file /root/rocketchat/.env -f /root/compose.yml up -d
-        register: docker_out
+        shell: podman compose --env-file /root/rocketchat/.env -f /root/compose.yml up -d
+        register: podman_out
 
       - name: Creating a directory for shell script
         ansible.builtin.file:
