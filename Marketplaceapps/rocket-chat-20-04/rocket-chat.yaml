@@ -8,29 +8,29 @@
         ansible.builtin.apt:
           update_cache: yes
 
-      # - name: Download file for docker and docker compose
-      #   ansible.builtin.get_url:
-      #     url: https://get.docker.com
-      #     dest: /usr/local/src/docker.sh
-      #     mode: '0755'
+      - name: Download file for docker and docker compose
+        ansible.builtin.get_url:
+          url: https://get.docker.com
+          dest: /usr/local/src/docker.sh
+          mode: '0755'
 
-      - name: Add podman Repo
-        shell: echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+      # - name: Add podman Repo
+      #   shell: echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
       
-      - name: Add podman apt-key
-        shell: curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/Release.key" | sudo apt-key add -
+      # - name: Add podman apt-key
+      #   shell: curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/Release.key" | sudo apt-key add -
 
-      - name: Updating Packages
-        ansible.builtin.apt:
-          update_cache: yes
+      # - name: Updating Packages
+      #   ansible.builtin.apt:
+      #     update_cache: yes
 
-      - name: installing podman
-        package:
-          name: "podman"
-          state: present
+      # - name: installing podman
+      #   package:
+      #     name: "podman"
+      #     state: present
 
-      # - name: Installing docker and docker compose
-      #   shell: /usr/local/src/docker.sh
+      - name: Installing docker and docker compose
+        shell: /usr/local/src/docker.sh
 
       - name: Download compose file for Installing rocker chat
         ansible.builtin.get_url:
