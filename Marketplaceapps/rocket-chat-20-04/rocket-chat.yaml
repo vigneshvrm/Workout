@@ -20,6 +20,10 @@
       - name: Add podman apt-key
         shell: curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/Release.key" | sudo apt-key add -
 
+      - name: Updating Packages
+        ansible.builtin.apt:
+          update_cache: yes
+          
       - name: installing podman
         package:
           name: "podman"
