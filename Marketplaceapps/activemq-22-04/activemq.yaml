@@ -71,12 +71,20 @@
           - "sed -i 's/admin: admin, admin/admin: {{ activemqadminpassword.stdout }}, admin/g' /opt/apache-activemq-{{ latest_version.stdout }}/conf/users.properties"
           # - "sed -i 's/user: user, user//g' /opt/apache-activemq-{{ latest_version.stdout }}/conf/jetty-realm.properties"
 
-      # - name: Copy files for shell script
-      #   copy:
-      #     src: "{{ item.confsrc }}"
-      #     dest: "{{ item.confdest }}"
-      #   with_items: 
-      #     - { confsrc: '/usr/local/src/activemq-22-04/etc/systemd/system/activemq.service', confdest: '/etc/systemd/system/'}     
+      - name: change the version name on the activemq.service
+        replace:
+            path: /usr/local/src/activemq-22-04/etc/systemd/system/activemq.service
+            regexp: '5.17.4'
+            replace: '{{ latest_version.stdout }}'
+          
+    
+
+      - name: Copy files for shell script
+        copy:
+          src: "{{ item.confsrc }}"
+          dest: "{{ item.confdest }}"
+        with_items: 
+          - { confsrc: '/usr/local/src/activemq-22-04/etc/systemd/system/activemq.service', confdest: '/etc/systemd/system/'}     
 
       - name: Reload Daemon
         ansible.builtin.systemd:
