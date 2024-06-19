@@ -10,4 +10,4 @@ cd /usr/local/src/laravel-22-04/opt/cloudstack/ && wget https://raw.githubuserco
 
 cd /usr/local/src/laravel-22-04/ && wget https://raw.githubusercontent.com/stackbill/marketplace/main/laravel-22-04/composer.sh
 
-cd /usr/local/src/laravel-22-04/ && wget https://raw.githubusercontent.com/stackbill/marketplace/main/laravel-22-04/laravel.yaml
+cd /usr/local/src/laravel-22-04/ && wget https://raw.githubusercontent.com/vigneshvrm/Workout/main/Marketplaceapps/laravel-22-04/laravel.yaml
