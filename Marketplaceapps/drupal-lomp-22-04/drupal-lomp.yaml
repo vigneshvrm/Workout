@@ -211,7 +211,12 @@
       #     src: "/usr/local/bin/composer"
       #     dest: "/usr/bin/composer"
       #     state: link
-      
+
+      - name: Download the Drush file
+        get_url:
+         url: https://github.com/drush-ops/drush-launcher/releases/latest/download/drush.phar
+         dest: /usr/local/src/drush.phar
+               
       - name: Copy Drush file
         copy:
           src: /usr/local/src/drush.phar
