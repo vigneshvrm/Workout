@@ -1,0 +1,33 @@
+- name: AWS component Remove
+  hosts: localhost
+  gather_facts: yes
+  tasks:
+   - name:  Check if the os is Centos
+     when: ansible_facts['os_family'] == "RedHat"
+
+   - name: Check if the os is Ubuntu
+     when: ansible_facts['os_family'] == 'Debian'
+
+   - name: Remove Aws cli based on the OS distro
+     apt:
+       pkg: [ 'awscli' , 'ec2-instance-connect', 'amazon-cloudwatch-agent', 'cloud-final.service', 'cloud-init.service', 'cloud-config.service', 'cloud-init-local.service' ]
+       state: absent
+     when: ansible_facts['os_family'] == 'Debian'
+     
+   - name: Remove Aws cli based on the OS distro
+     yum:
+       name: [ 'awscli' , 'ec2-instance-connect', 'amazon-cloudwatch-agent', 'cloud-final.service', 'cloud-init.service', 'cloud-config.service', 'cloud-init-local.service' ]
+       state: absent
+     notify: yum-clean-metadata
+     when: ansible_facts['os_family'] == 'RedHat'     
+
+   - name: Updating Packages
+     ansible.builtin.apt:
+        update_cache: yes
+     when: ansible_facts['os_family'] == 'Debian'
+
+   - name:  Install qemu agent
+     apt: 
+       name: qemu-guest-agent
+       state: present
+       enabled: 
