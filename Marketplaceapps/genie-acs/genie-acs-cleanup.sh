@@ -16,7 +16,7 @@ echo -e "${RED}This message will be removed in the next login!${NC}"
 echo
 echo
 echo
-echo -e "${RED}$http://${IP_ADDRESS}:3000${NC}"
+echo -e "${RED}http://${IP_ADDRESS}:3000${NC}"
 echo
 echo -e "${RED}Username : admin${NC}"
 echo
