@@ -1,8 +1,8 @@
 - name: GenieACS Setup
   hosts: localhost
   tasks:
-      # - name: Restarting sshd
-      #   shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
+      - name: Restarting sshd
+        shell: "sed -i 's/#Match User anoncvs/ForceCommand echo Please wait until the installation is completed..../g' /etc/ssh/sshd_config && systemctl restart sshd"
        
       - name: Updating Packages
         ansible.builtin.apt:
@@ -210,3 +210,25 @@
           owner: root
           group: root
           mode: '0644'
+
+      - name: Creating a directory for shell script
+        ansible.builtin.file:
+          path: /opt/genie-acs                                                                                                                                              
+          state: directory  
+
+      - name: Copy files for shell script
+        copy:
+          src: "{{ item.confsrc }}"
+          dest: "{{ item.confdest }}"
+          remote_src: yes   
+        with_items: 
+          - { confsrc: '/usr/local/src/genie-acs/genie-acs-cleanup.sh', confdest: '/opt/genie-acs'}  
+
+      - name: Adding a line for shell script
+        lineinfile:
+          path: /root/.bashrc
+          line: "chmod +x /opt/genie-acs/genie-acs-cleanup.sh && /opt/genie-acs/genie-acs-cleanup.sh"
+          state: present
+
+      - name: Restarting sshd
+        shell: "sed -i 's/ForceCommand echo Please wait until the installation is completed..../#Match User anoncvs/g' /etc/ssh/sshd_config && systemctl restart sshd"
